@@ -3,17 +3,6 @@
 #' This function can be used to construct an object. Any object will have a \code{get} and a \code{set} method which allows the object to have fields. The \code{addMethod} method allows one to add a method. The \code{overrideMethod} method allows one to override a method from parent class.
 #'
 #' @return an object.
-#' @example
-#' Person <- function(name) {
-#'   #object to return
-#'   person <- Object()
-#'
-#'   person$set('name', name)
-#'
-#'   person$addMethod('getName', )
-#'
-#' }
-#'
 #' @export
 #' @importFrom pryr partial
 Object <- function() {
