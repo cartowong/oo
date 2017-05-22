@@ -12,12 +12,16 @@ registerMethods <- function(object, methodNames) {
       stop(sprintf('Registering a non-existing method %s', methodName))
     }
 
+    # use immediate function to create a unique environment for each method
     object[[methodName]] <- (function(object, methodName) {
-      localEnvir <- new.env()
-      assign('methodName', methodName, envir = localEnvir)
 
+      # make sure the function below can resolve these symbols at runtime
+      object <- object
+      methodName <- methodName
+
+      # Since the method may be overriden after it is registered, we obtain the method from the
+      # object's local environment.
       function(...) {
-        methodName <- get('methodName', envir = localEnvir)
         method <- object$get(methodName)
         method(...)
       }
