@@ -95,27 +95,9 @@ Output:
 [1] "Hi, my name is AMY CHAN."
 ```
 
-## Mutate an object
+## Passing objects by reference
 
-An R function cannot mutate an object in the outside environment through simple assignment (<-). To illustrate this point, the function `setValue` below fails to change the value of `obj`. By creating an object using this package, the function `setName` below successfully changes the name of the person object.
-
-```
-obj <- list(value = 1)
-setValue <- function(newValue) {
-  obj$value <-newValue
-}
-setValue(2)
-print(obj$value) # prints 1 (setter does not work)
-
-peter <- Person('Peter')
-setName <- function(newName) {
-  peter$setName(newName)
-}
-setName('Peter Pan')
-print(peter$getName()) # prints 'Peter Pan' (setter works)
-```
-
-Note that we obtain the same result if `obj` and `peter` are passed to `setValue` and `setName` as arguments.
+In R function arguments are passed by values instead of by references. To illustrate this, the function `setValue` below fails to change the value of `obj`. This is because the value of `obj` is copied and is assigned to the symbol `o` at the beginning of the function execution.
 
 ```
 obj <- list(value = 1)
@@ -123,12 +105,27 @@ setValue <- function(o, newValue) {
   o$value <-newValue
 }
 setValue(obj, 2)
-print(obj$value) # prints 1 (setter does not work)
+print(obj$value) # prints 1 (setValue does not work)
+```
 
+What if we remove the function argument? The function `setValue1` also fails to change the value of `obj`. When `setValue1` is executed, it needs to resolve the symbol `obj`. Since `obj` is not defined in the function body, R looks it up in the defining environment of `setValue1` and finds it. However, the value is also copied and the symbol `obj` within the function body of `setValue1` refers to the copied object.
+
+```
+obj <- list(value = 1)
+setValue1 <- function(newValue) {
+  obj$value <-newValue
+}
+setValue1(2)
+print(obj$value) # prints 1 (setValue1 does not work either)
+```
+
+Using this package, we could mimic it as if objects are passing by references. For those who are curious about what happens behind the scenes, the symbol `person` within the function body of `setName` refers to a copy of the person object which shares the same local environment with the original person object.
+
+```
 peter <- Person('Peter')
 setName <- function(person, newName) {
   person$setName(newName)
 }
 setName(peter, 'Peter Pan')
-print(peter$getName()) # prints 'Peter Pan' (setter works)
+print(peter$getName()) # prints 'Peter Pan' (setName works)
 ```
