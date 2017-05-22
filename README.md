@@ -95,4 +95,40 @@ Output:
 [1] "Hi, my name is AMY CHAN."
 ```
 
+## Mutate an object
 
+An R function cannot mutate an object in the outside environment through simple assignment (<-). To illustrate this point, the function `setValue` below fails to change the value of `obj`. By creating an object using this package, the function `setName` below successfully changes the name of the person object.
+
+```
+obj <- list(value = 1)
+setValue <- function(newValue) {
+  obj$value <-newValue
+}
+setValue(2)
+print(obj$value) # prints 1 (setter does not work)
+
+peter <- Person('Peter')
+setName <- function(newName) {
+  peter$setName(newName)
+}
+setName('Peter Pan')
+print(peter$getName()) # prints 'Peter Pan' (setter works)
+```
+
+Note that we obtain the same result if `obj` and `peter` are passed to `setValue` and `setName` as arguments.
+
+```
+obj <- list(value = 1)
+setValue <- function(o, newValue) {
+  o$value <-newValue
+}
+setValue(obj, 2)
+print(obj$value) # prints 1 (setter does not work)
+
+peter <- Person('Peter')
+setName <- function(person, newName) {
+  person$setName(newName)
+}
+setName(peter, 'Peter Pan')
+print(peter$getName()) # prints 'Peter Pan' (setter works)
+```
