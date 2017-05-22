@@ -95,7 +95,7 @@ Output:
 [1] "Hi, my name is AMY CHAN."
 ```
 
-## Passing objects by reference
+## Passing objects by references
 
 In R function arguments are passed by values instead of by references. To illustrate this, the function `setValue` below fails to change the value of `obj`. This is because the value of `obj` is copied and is assigned to the symbol `o` at the beginning of the function execution.
 
