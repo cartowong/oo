@@ -4,7 +4,6 @@
 #'
 #' @return an object.
 #' @export
-#' @importFrom pryr partial
 Object <- function() {
 
   # local environment
@@ -24,7 +23,9 @@ Object <- function() {
   }
 
   # list all properties of this object
-  object$ls <- pryr::partial(ls, envir = localEnv)
+  object$ls <- function(...) {
+    ls(envir = localEnv, ...)
+  }
 
   # add a method
   object$addMethod <- function(name, f) {
@@ -40,7 +41,9 @@ Object <- function() {
       stop(sprintf('Overriding a non-existing method %s', name))
     }
     parentMethod <- object$get(name)
-    g <- pryr::partial(f, parentMethod = parentMethod)
+    g <- function(...) {
+      f(parentMethod = parentMethod, ...)
+    }
     object$set(name, g)
   }
 
