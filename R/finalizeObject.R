@@ -1,9 +1,9 @@
-#' Construct an object.
+#' Finalize an object.
 #'
-#' This function should be called at the begining of a constructor function to create an object.
+#' This function should be called at the end of a constructor function to finalize an object.
 #'
-#' @return an object.
-#' @details Any object has the methods "get", "getPrivate". "set", "setPrivate", "ls", "addMethod", and "overrideMethod".
+#' @param object an object
+#' @param publicMethodNames a character vector of all public method names
 #' @examples
 #' # Constructor.
 #' Person <- function(name, age) {
@@ -84,61 +84,30 @@
 #' amy$sayHi()               # Hi, my name is AMY CHAN.
 #'
 #' @export
-Object <- function() {
+finalizeObject <- function(object, publicMethodNames) {
+  # remove private getter and setter
+  object$getPrivate <- NULL
+  object$setPrivate <- NULL
 
-  # public environment
-  publicEnv <- new.env()
-
-  # private environment
-  privateEnv <- new.env()
-
-  # object to return
-  object <- list()
-
-  # getter
-  object$get <- function(key) {
-    get(key, envir = publicEnv)
-  }
-
-  # getter
-  object$getPrivate <- function(key) {
-    get(key, envir = privateEnv)
-  }
-
-  # setter
-  object$set <- function(key, value) {
-    assign(key, value, envir = publicEnv)
-  }
-
-  # setter
-  object$setPrivate <- function(key, value) {
-    assign(key, value, envir = privateEnv)
-  }
-
-  # list all properties of this object
-  object$ls <- function(...) {
-    ls(envir = publicEnv, ...)
-  }
-
-  # add a method
-  object$addMethod <- function(name, f) {
-    if (name %in% ls(envir = publicEnv)) {
-      stop(sprintf('The method %s already exists. Use overrideMethod.', name))
+  for (methodName in publicMethodNames) {
+    if (!(methodName %in% object$ls())) {
+      stop(sprintf('Registering a non-existing method %s', methodName))
     }
-    object$set(name, f)
-  }
 
-  # override a method
-  object$overrideMethod <- function(name, f) {
-    if (!(name %in% ls(envir = publicEnv))) {
-      stop(sprintf('Overriding a non-existing method %s', name))
-    }
-    parentMethod <- object$get(name)
-    g <- function(...) {
-      f(parentMethod = parentMethod, ...)
-    }
-    object$set(name, g)
-  }
+    # use immediate function to create a unique environment for each method
+    object[[methodName]] <- (function(object, methodName) {
 
-  return(object)
+      # make sure the function below can resolve these symbols at runtime
+      object <- object
+      methodName <- methodName
+
+      # Since the method may be overriden after it is registered, we obtain the method from the
+      # object's local environment.
+      function(...) {
+        method <- object$get(methodName)
+        method(...)
+      }
+    })(object, methodName)
+  }
+  object
 }

@@ -8,26 +8,35 @@ This package allows one to implement object-oriented design in R. One may define
 Run the following R script.
 
 ```
-install.packages('devtools') # may skip if you already have devtools installed
+install.packages('devtools') # may skip this line if you already have devtools installed
 library(devtools)
 install_github('cartowong/oo')
 library(oo)
 ```
 
 ## Example
-This package provides two functions `Object()` and `registerMethods(object, methodNames)`. After installing and loading the package, you may access the help info by running, for example, `?Object`. Below we provide an example for how you may use these two functions.
+This package provides two functions `Object()` and `finalizeObject(object, publicMethodNames)`.
+
+The function `Object()` should be called at the begining of a constructor function to create an object. Any object has the methods "get", "getPrivate". "set", "setPrivate", "ls", "addMethod", and "overrideMethod". These methods can be accessed through the dollar sign notation.
+
+The function `finalizeObject(object, publicMethodNames)` should be called at the end of a constructor function to finalize an object. This will register all public methods for the object so that they can be accessed through the dollar sign notation. Moreover, the `getPrivate` and `setPrivate` methods will be removed so that private fields can only be accessed within the body of the constructor function.
+
+After installing and loading the package, you may access the help info by running, for example, `?Object`. Below we provide an example for how you may use these two functions to create and to extend a class.
 
 ```
 # Constructor.
-Person <- function(name) {
+Person <- function(name, age) {
 
   # object to return
   person <- Object()
 
-  # name of the person
+  # public field
   person$set('name', name)
 
-  # getter (will be overridden by the subclass Student)
+  # private field
+  person$setPrivate('age', age)
+
+  # getter
   person$addMethod('getName', function() {
     person$get('name')
   })
@@ -37,6 +46,13 @@ Person <- function(name) {
     person$set('name', value)
   })
 
+  # This method refers to the private field age. The 'getPrivate' function will be removed
+  # at the end of this constructor by the 'finalizeObject' function. So, the private field
+  # age is not accessible outside this constructor.
+  person$addMethod('isOver18', function() {
+    person$getPrivate('age') > 18
+  })
+
   # Note that this method calls getName(). If a subclass overrides getName(),
   # calling this method from an instance of the subclass will call the overriden
   # version of getName().
@@ -44,18 +60,16 @@ Person <- function(name) {
     print(sprintf('Hi, my name is %s.', person$get('getName')()))
   })
 
-  # Register the methods so that they can be accessed using the dollar sign notation.
-  # Note that this allows code completion if the IDE supports it.
-  registerMethods(person, c('getName', 'setName', 'sayHi'))
+  finalizeObject(person, c('getName', 'setName', 'isOver18', 'sayHi'))
 }
 
 # Constructor. (This class extends Person.)
-Student <- function(name, studentID) {
+Student <- function(name, age, studentID) {
 
   # object to return
-  student <- Person(name)
+  student <- Person(name, age)
 
-  # Student ID. (Note that the name is inherited from the super class Person.)
+  # public field
   student$set('studentID', studentID)
 
   # override
@@ -63,36 +77,30 @@ Student <- function(name, studentID) {
     toupper(parentMethod())
   })
 
-  # no new methods to register
-  student
+  finalizeObject(student, c())
 }
 
-peter <- Person('Peter')
-print(peter$getName())
+peter <- Person('Peter', 12)
+print(peter$getName())    # Peter
+print(peter$get('name'))  # Peter
+print(peter$isOver18())   # FALSE
 
 peter$setName('Peter Pan')
-print(peter$getName())
+print(peter$getName())    # Peter Pan
+print(peter$get('name'))  # Peter Pan
 
-peter$sayHi()
+peter$sayHi()             # Hi, my name is Peter Pan.
 
-amy <- Student('Amy', 12)
-print(amy$getName())
+amy <- Student('Amy', 22, 987)
+print(amy$getName())      # AMY
+print(amy$get('name'))    # Amy
+print(amy$isOver18())     # TRUE
 
 amy$setName('Amy Chan')
-print(amy$getName())
+print(amy$getName())      # AMY CHAN
+print(amy$get('name'))    # Amy Chan
 
-amy$sayHi()
-```
-
-Output:
-
-```
-[1] "Peter"
-[1] "Peter Pan"
-[1] "Hi, my name is Peter Pan."
-[1] "AMY"
-[1] "AMY CHAN"
-[1] "Hi, my name is AMY CHAN."
+amy$sayHi()               # Hi, my name is AMY CHAN.
 ```
 
 ## Passing objects by references
