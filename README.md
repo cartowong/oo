@@ -130,7 +130,7 @@ print(obj$value) # prints 1 (setValue1 does not work either)
 Using this package, we could mimic it as if objects are passing by references. For those who are curious about what happens behind the scenes, the symbol `person` within the function body of `setName` refers to a copy of the person object which shares the same local environment with the original person object.
 
 ```
-peter <- Person('Peter')
+peter <- Person(name = 'Peter', age = 12)
 setName <- function(person, newName) {
   person$setName(newName)
 }
