@@ -125,6 +125,39 @@ print(amy$get('name'))    # Amy Chan
 amy$sayHi()               # Hi, my name is AMY CHAN.
 ```
 
+## Private read-only fields
+An object may have private read-only fields. In the example below, the field `count` of the `Counter` object is private read-only. It is private since it cannot be accessed after the `Counter` object is created. It is read-only in the sense that methods of `Counter` are not able to change its value.
+
+```
+# Constructor
+Counter <- function() {
+
+  # object to return
+  counter <- Object()
+
+  # private read-only field
+  count <- 0
+
+  # getter
+  counter$addMethod('getCount', function() {
+    count
+  })
+
+  # This method tries to add 1 to the private read-only field. It won't work.
+  counter$addMethod('addCount', function() {
+    count <- count + 1
+  })
+
+  finalizeObject(counter, c('getCount', 'addCount'))
+}
+
+counter <- Counter()
+print(counter$getCount()) # 0
+
+counter$addCount()
+print(counter$getCount()) # 0
+```
+
 ## Passing objects by references
 In R function arguments are passed by values instead of by references. To illustrate this, the function `setValue` below fails to change the value of `obj`. This is because the value of `obj` is copied and is assigned to the symbol `o` at the beginning of the function execution.
 
