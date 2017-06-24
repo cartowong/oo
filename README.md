@@ -23,7 +23,11 @@ library(oo)
 This package provides two functions `Object()` and `finalizeObject(object, publicMethodNames)`. These two functions should be called at the begining and at the end of a constructor function. Here is the recommended pattern.
 
 ```
-# Constructor.
+#' Constructor of the class Person.
+#'
+#' @param name the name of the person
+#' @param age  the age of the person
+#' @return an instance of Person
 Person <- function(name, age) {
 
   # object to return
@@ -36,29 +40,30 @@ Person <- function(name, age) {
   person$setPrivate('age', age)
 
   # getter
-  person$addMethod('getName', function() {
-    person$get('name')
+  person$addMethod('getName', function(this) {
+    this$get('name')
   })
 
   # setter
-  person$addMethod('setName', function(value) {
-    person$set('name', value)
+  person$addMethod('setName', function(this, value) {
+    this$set('name', value)
   })
 
   # This method refers to the private field age. The 'getPrivate' function will be removed
   # at the end of this constructor by the 'finalizeObject' function. So, the private field
   # age is not accessible outside this constructor.
-  person$addMethod('isOver18', function() {
-    person$getPrivate('age') > 18
+  person$addMethod('isOver18', function(this) {
+    this$getPrivate('age') > 18
   })
 
   # Note that this method calls getName(). If a subclass overrides getName(),
   # calling this method from an instance of the subclass will call the overriden
   # version of getName().
-  person$addMethod('sayHi', function() {
-    print(sprintf('Hi, my name is %s.', person$get('getName')()))
+  person$addMethod('sayHi', function(this) {
+    sprintf('Hi, my name is %s.', this$get('getName')())
   })
 
+  # Register the public methods. Unregistered methods will be private.
   finalizeObject(person, c('getName', 'setName', 'isOver18', 'sayHi'))
 }
 ```
@@ -92,7 +97,11 @@ Extending a class is similar to defining a class except for two differences.
 2. Use the function `overrideMethod` to override a super class method. The first argument of the overriden function is a special argument called `parentMethod`. This allows the overriden method to call its parent method.
 
 ```
-# Constructor. (This class extends Person.)
+#' Constructor of the class Student.
+#'
+#' The Student class extends the Person class.
+#'
+#' @return an instance of Student
 Student <- function(name, age, studentID) {
 
   # object to return
@@ -124,6 +133,10 @@ print(amy$get('name'))    # Amy Chan
 
 amy$sayHi()               # Hi, my name is AMY CHAN.
 ```
+
+## Using `this` and `parentMethod`
+
+When you call `addMethod` or `overrideMethod`, the second argument is a function object f. In the argument list of f, you could choose to add the special arguments `this` or `parentMethod` (if you are overriding a method). This allows you to reference to the current object and the parent method within the body of f. Note that these two named function arguments are optional. You do not need to add them into the argument list if you do not use them in the function body.
 
 ## Private read-only fields
 An object may have private read-only fields. In the example below, the field `count` of the `Counter` object is private read-only. It is private since it cannot be accessed after the `Counter` object is created. It is read-only in the sense that methods of `Counter` are not able to change its value.

@@ -3,86 +3,7 @@
 #' This function should be called at the begining of a constructor function to create an object.
 #'
 #' @return an object.
-#' @details Any object has the methods "get", "getPrivate". "set", "setPrivate", "ls", "addMethod", and "overrideMethod".
-#' @examples
-#' # Constructor.
-#' Person <- function(name, age) {
-#'
-#'  # object to return
-#'  person <- Object()
-#'
-#'   # public field
-#'   person$set('name', name)
-#'
-#'   # private field
-#'   person$setPrivate('age', age)
-#'
-#'   # getter
-#'   person$addMethod('getName', function() {
-#'     person$get('name')
-#'   })
-#'
-#'   # setter
-#'   person$addMethod('setName', function(value) {
-#'     person$set('name', value)
-#'   })
-#'
-#'   # This method refers to the private field age. The 'getPrivate' function will be removed
-#'   # at the end of this constructor by the 'finalizeObject' function. So, the private field
-#'   # age is not accessible outside this constructor.
-#'   person$addMethod('isOver18', function() {
-#'     person$getPrivate('age') > 18
-#'   })
-#'
-#'   # Note that this method calls getName(). If a subclass overrides getName(),
-#'   # calling this method from an instance of the subclass will call the overriden
-#'   # version of getName().
-#'   person$addMethod('sayHi', function() {
-#'     print(sprintf('Hi, my name is %s.', person$get('getName')()))
-#'   })
-#'
-#'   finalizeObject(person, c('getName', 'setName', 'isOver18', 'sayHi'))
-#' }
-#'
-#' # Constructor. (This class extends Person.)
-#' Student <- function(name, age, studentID) {
-#'
-#'   # object to return
-#'   student <- Person(name, age)
-#'
-#'   # public field
-#'   student$set('studentID', studentID)
-#'
-#'   # override
-#'   student$overrideMethod('getName', function(parentMethod) {
-#'     toupper(parentMethod())
-#'   })
-#'
-#'   finalizeObject(student, c())
-#' }
-#'
-#' peter <- Person('Peter', 12)
-#' print(peter$getName())    # Peter
-#' print(peter$get('name'))  # Peter
-#' print(peter$isOver18())   # FALSE
-#'
-#' peter$setName('Peter Pan')
-#' print(peter$getName())    # Peter Pan
-#' print(peter$get('name'))  # Peter Pan
-#'
-#' peter$sayHi()             # Hi, my name is Peter Pan.
-#'
-#' amy <- Student('Amy', 22, 987)
-#' print(amy$getName())      # AMY
-#' print(amy$get('name'))    # Amy
-#' print(amy$isOver18())     # TRUE
-#'
-#' amy$setName('Amy Chan')
-#' print(amy$getName())      # AMY CHAN
-#' print(amy$get('name'))    # Amy Chan
-#'
-#' amy$sayHi()               # Hi, my name is AMY CHAN.
-#'
+#' @details Any object has the methods "get", "getPrivate". "set", "setPrivate", "ls", "addMethod", and "overrideMethod". For more details, see http://www.github.com/cartowong/oo.
 #' @export
 Object <- function() {
 
@@ -91,6 +12,18 @@ Object <- function() {
 
   # private environment
   privateEnv <- new.env()
+
+  # Does the given function have an argument of the given name?
+  #
+  # @param f       the given function
+  # @param argName the given argument name
+  #
+  # @return TRUE if the given function has an argument of the given name, and FALSE otherwise
+  hasArg <- function(f, argName) {
+    argList <- formals(f)
+    pattern <- sprintf('%s.*=', argName)
+    grepl(pattern = pattern, deparse(argList))
+  }
 
   # object to return
   object <- list()
@@ -125,7 +58,14 @@ Object <- function() {
     if (name %in% ls(envir = publicEnv)) {
       stop(sprintf('The method %s already exists. Use overrideMethod.', name))
     }
-    object$set(name, f)
+    g <- function(...) {
+      if (hasArg(f, 'this')) {
+        f(this = object, ...)
+      } else {
+        f(...)
+      }
+    }
+    object$set(name, g)
   }
 
   # override a method
@@ -135,7 +75,21 @@ Object <- function() {
     }
     parentMethod <- object$get(name)
     g <- function(...) {
-      f(parentMethod = parentMethod, ...)
+      if (hasArg(f, 'this')) {
+        if (hasArg(f, 'parentMethod')) {
+          f(this = object, parentMethod = parentMethod, ...)
+        }
+        else {
+          f(this = object, ...)
+        }
+      } else { # Otherwise, f does not have an argument 'this'.
+        if (hasArg(f, 'parentMethod')) {
+          f(parentMethod = parentMethod, ...)
+        }
+        else {
+          f(...)
+        }
+      }
     }
     object$set(name, g)
   }
