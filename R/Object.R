@@ -17,12 +17,9 @@ Object <- function() {
   #
   # @param f       the given function
   # @param argName the given argument name
-  #
   # @return TRUE if the given function has an argument of the given name, and FALSE otherwise
   hasArg <- function(f, argName) {
-    argList <- formals(f)
-    pattern <- sprintf('%s.*=', argName)
-    grepl(pattern = pattern, deparse(argList))
+    argName %in% names(formals(f))
   }
 
   # object to return
