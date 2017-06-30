@@ -1,7 +1,7 @@
 Package: oo
 Type: Package
 Title: Object-oriented framework for R programming
-Version: 1.0
+Version: 2.0
 Author: Carto Wong
 Maintainer: Carto Wong <cartowong@gmail.com>
 Description: This package allows one to implement object-oriented design in R. One may define classes, add getters and setters, extend a class, and override methods. This framework is compatible with code completion if the IDE supports it.

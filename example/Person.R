@@ -19,25 +19,28 @@ Person <- function(name, age) {
     this$get('name')
   })
 
+  # private getter
+  person$addPrivateMethod('getAge', function(this) {
+    this$get('age')
+  })
+
   # setter
   person$addMethod('setName', function(this, value) {
     this$set('name', value)
   })
 
-  # This method refers to the private field age. The 'getPrivate' function will be removed
-  # at the end of this constructor by the 'finalizeObject' function. So, the private field
-  # age is not accessible outside this constructor.
+  # This method refers to the private field age.
   person$addMethod('isOver18', function(this) {
-    this$getPrivate('age') > 18
+    this$get('age') > 18
   })
 
   # Note that this method calls getName(). If a subclass overrides getName(),
   # calling this method from an instance of the subclass will call the overriden
   # version of getName().
   person$addMethod('sayHi', function(this) {
-    sprintf('Hi, my name is %s.', this$get('getName')())
+    sprintf('Hi, my name is %s.', this$getName())
   })
 
-  # Register the public methods. Unregistered methods will be private.
-  finalizeObject(person, c('getName', 'setName', 'isOver18', 'sayHi'))
+  # Register public methods and remove private setters.
+  person$finalize()
 }

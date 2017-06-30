@@ -1,6 +1,11 @@
 # oo
 An R package to provide an object-oriented framework for R programming.
 
+## Updates
+
+* version 2.0 (June 30, 2017): Add 'this' keyword. When adding or overriding a method, the 'this' object now has all the public and private methods registered. Fix a bug where a subclass cannot have its own private fields/methods. 
+* version 1.0 (May 20, 2017): Initial version.
+
 ## Package description
 This package allows one to implement object-oriented designs in R. With this package, you may do the following.
 
@@ -8,7 +13,7 @@ This package allows one to implement object-oriented designs in R. With this pac
 * Extend a class and override its public methods. The overriden method may call its parent method.
 * When an object is passed to a function as an argument, it behaves as if the object is passed by reference (instead of by value).
 
-The public methods of an object can be called using the dollar sign notation. If your IDE supports code completion, method names will be auto-completed.
+The public methods of an object can be referenced using the dollar sign notation. If your IDE supports code completion, method names will be auto-completed.
 
 ## How to install and load this package?
 Run the following R script.
@@ -20,7 +25,20 @@ install_github('cartowong/oo')
 library(oo)
 ```
 ## Basic pattern
-This package provides two functions `Object()` and `finalizeObject(object, publicMethodNames)`. These two functions should be called at the begining and at the end of a constructor function. Here is the recommended pattern.
+This package provides a function `Object()` as the starting point of object-oriented programming. Any instance of `Object` has the following properties attached.
+
+* get<br/>This can be used to retrieve the value of a field. If it is called within the body of a method (probably through the `this` keyword, e.g. `this$get('name')`), both public and private fields are accessible. Otherwise, only public fields are accessible.
+* set<br/>This can be used to set the value of a **public** field.
+* setPrivate<br/>This can be used to set the value of a **private** field.
+* fieldNames<br/>List out the names of all public fields.
+* methodNames<br/>List out the names of all public methods.
+* addMethod<br/>Add a **public** method to the current object.
+* addPrivateMethod<br/>Add a **private** method to the current object.
+* extend<br/>Create a copy of the current object which shares the same public fields/methods but has a separate set of private fields/methods.
+* overrideMethod<br/>Override a public method of the super class.
+* finalize<br/>This should be called at the end of a constructor.
+
+Here is the recommended pattern.
 
 ```
 #' Constructor of the class Person.
@@ -44,31 +62,34 @@ Person <- function(name, age) {
     this$get('name')
   })
 
+  # private getter
+  person$addPrivateMethod('getAge', function(this) {
+    this$get('age')
+  })
+
   # setter
   person$addMethod('setName', function(this, value) {
     this$set('name', value)
   })
 
-  # This method refers to the private field age. The 'getPrivate' function will be removed
-  # at the end of this constructor by the 'finalizeObject' function. So, the private field
-  # age is not accessible outside this constructor.
+  # This method refers to the private field age.
   person$addMethod('isOver18', function(this) {
-    this$getPrivate('age') > 18
+    this$get('age') > 18
   })
 
   # Note that this method calls getName(). If a subclass overrides getName(),
   # calling this method from an instance of the subclass will call the overriden
   # version of getName().
   person$addMethod('sayHi', function(this) {
-    sprintf('Hi, my name is %s.', this$get('getName')())
+    sprintf('Hi, my name is %s.', this$getName())
   })
 
-  # Register the public methods. Unregistered methods will be private.
-  finalizeObject(person, c('getName', 'setName', 'isOver18', 'sayHi'))
+  # Register public methods and remove private setters.
+  person$finalize()
 }
 ```
 
-One may then use the above constructor function to create instances of the Person class. Public methods can be called using the dollar sign notation. Note that the `getPrivate` and `setPrivate` methods are not accessible outside the constructor. There is no way to access the private field `age` after the person object is created.
+One may then use the above constructor function to create instances of the Person class. Public methods can be called using the dollar sign notation. Note that the `setPrivate` method is not accessible outside the constructor, and the `get` method does not return any private field at this point.
 
 ```
 peter <- Person('Peter', 12)
@@ -83,18 +104,18 @@ print(peter$getName())    # Peter Pan
 peter$sayHi()             # Hi, my name is Peter Pan.
 ```
 
-Any object comes with a `ls()` method which returns the vector of the names of all public fields and public methods.
+The method `methodNames` returns the names of all public methods.
 
 ```
-> peter$ls()
-[1] "getName"  "isOver18" "name"     "sayHi"    "setName" 
+> peter$methodNames()
+[1] "getName"  "isOver18" "sayHi"    "setName" 
 ```
 
 ## Inheritance
 Extending a class is similar to defining a class except for two differences.
 
-1. At the begining of a constructor, we call the super class constructor instead of calling `Object()`.
-2. Use the function `overrideMethod` to override a super class method. The first argument of the overriden function is a special argument called `parentMethod`. This allows the overriden method to call its parent method.
+1. At the begining of a constructor, we call the super class constructor instead of calling `Object()`, and we call `extend()`.
+2. Use the function `overrideMethod` to override a super class method. The special arguments `this` and `parentMethod` are optional and could be omitted it you do not need them.
 
 ```
 #' Constructor of the class Student.
@@ -105,17 +126,28 @@ Extending a class is similar to defining a class except for two differences.
 Student <- function(name, age, studentID) {
 
   # object to return
-  student <- Person(name, age)
+  student <- Person(name, age)$extend()
 
-  # public field
-  student$set('studentID', studentID)
+  # private field
+  student$setPrivate('studentID', studentID)
+
+  # add private method
+  student$addPrivateMethod('getStudentID', function(this) {
+    this$get('studentID')
+  })
+
+  # add public method
+  student$addMethod('hiddenStudentID', function(this) {
+    id <- this$getStudentID()
+    gsub(pattern = ".", replacement = "x", x = as.character(id))
+  })
 
   # override
-  student$overrideMethod('getName', function(parentMethod) {
+  student$overrideMethod('getName', function(this, parentMethod) {
     toupper(parentMethod())
   })
 
-  finalizeObject(student, c())
+  student$finalize()
 }
 ```
 
@@ -161,7 +193,7 @@ Counter <- function() {
     count <- count + 1
   })
 
-  finalizeObject(counter, c('getCount', 'addCount'))
+  counter$finalize()
 }
 
 counter <- Counter()

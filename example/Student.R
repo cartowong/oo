@@ -8,15 +8,26 @@ source('example/Person.R')
 Student <- function(name, age, studentID) {
 
   # object to return
-  student <- Person(name, age)
+  student <- Person(name, age)$extend()
 
-  # public field
-  student$set('studentID', studentID)
+  # private field
+  student$setPrivate('studentID', studentID)
+
+  # add private method
+  student$addPrivateMethod('getStudentID', function(this) {
+    this$get('studentID')
+  })
+
+  # add public method
+  student$addMethod('hiddenStudentID', function(this) {
+    id <- this$getStudentID()
+    gsub(pattern = ".", replacement = "x", x = as.character(id))
+  })
 
   # override
-  student$overrideMethod('getName', function(parentMethod) {
+  student$overrideMethod('getName', function(this, parentMethod) {
     toupper(parentMethod())
   })
 
-  finalizeObject(student, c())
+  student$finalize()
 }
