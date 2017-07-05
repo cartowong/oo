@@ -3,6 +3,7 @@ An R package to provide an object-oriented framework for R programming.
 
 ## Updates
 
+* version 3.0 (July 4, 2017): Add TypeChecker, Precondition, and UnitTester.
 * version 2.0 (June 30, 2017): Add 'this' keyword. When adding or overriding a method, the 'this' object now has all the public and private methods registered. Fix a bug where a subclass cannot have its own private fields/methods. 
 * version 1.0 (May 20, 2017): Initial version.
 
@@ -12,6 +13,8 @@ This package allows one to implement object-oriented designs in R. With this pac
 * Create a constructor function for a class with public or private fields and methods. Private fields and private methods are only accessible within the body of the constructor.
 * Extend a class and override its public methods. The overriden method may call its parent method.
 * When an object is passed to a function as an argument, it behaves as if the object is passed by reference (instead of by value).
+* Utility functions to check and validate the type of function arguments.
+* Add unit tests to your project.
 
 The public methods of an object can be referenced using the dollar sign notation. If your IDE supports code completion, method names will be auto-completed.
 
@@ -48,6 +51,9 @@ Here is the recommended pattern.
 #' @return an instance of Person
 Person <- function(name, age) {
 
+  Precondition$checkIsString(name, 'name should be a string')
+  Precondition$checkIsNumeric(age, 'age should be numeric')
+  
   # object to return
   person <- Object()
 
@@ -111,6 +117,28 @@ The method `methodNames` returns the names of all public methods.
 [1] "getName"  "isOver18" "sayHi"    "setName" 
 ```
 
+## TypeChecker and Precondition
+
+These are two sets of utility functions added since version 3.0. They could be used to check and validate the type of function arguments. As of version 3.0, TypeChecker consists of 6 functions.
+
+* TypeChecker$isNA(x)
+* TypeChecker$isNull(x)
+* TypeChecker$isBoolean(x)
+* TypeChecker$isFunction(x)
+* TypeChecker$isNumeric(x)
+* TypeChecker$isString(x)
+
+Each of these functions returns a boolean (logical) indicating whether or not the given argument is of the expected type. Unlike, for example, is.numeric in the base package, the function isNumeric in TypeChecker checks whether the given object is a single numeric value. A vector of two numeric values is not considered as numeric type. Conceptually, its type is vector whose element type happens to be numeric.
+
+Precondition is a set of utility functions based on TypeChecker. If the argument is not of the expected type, an error will be thrown. Usually, these utility functions are called at the begining of a function body to validate the arguments.
+
+```
+myFunction <- function(x) {
+  Precondition$isNumeric(x, 'x is not numeric')
+  ...
+}
+```
+
 ## Inheritance
 Extending a class is similar to defining a class except for two differences.
 
@@ -125,6 +153,10 @@ Extending a class is similar to defining a class except for two differences.
 #' @return an instance of Student
 Student <- function(name, age, studentID) {
 
+  Precondition$checkIsString(name, 'name should be a string')
+  Precondition$checkIsNumeric(age, 'age should be numeric')
+  Precondition$checkIsString(studentID, 'studentID should be a string')
+  
   # object to return
   student <- Person(name, age)$extend()
 
@@ -154,7 +186,7 @@ Student <- function(name, age, studentID) {
 The class Student inherits all public methods from Person. Note that Student overrides the method `getName()` to use uppercase letters and the method `sayHi()` inherited from Person calls `getName()`. Therefore, calling `sayHi()` from an instance of Student would have the name in uppercase. This is the expected behavior in object-oriented programming.
 
 ```
-amy <- Student('Amy', 22, 987)
+amy <- Student('Amy', 22, '987')
 print(amy$getName())      # AMY
 print(amy$get('name'))    # Amy
 print(amy$isOver18())     # TRUE
@@ -174,7 +206,9 @@ When you call `addMethod` or `overrideMethod`, the second argument is a function
 An object may have private read-only fields. In the example below, the field `count` of the `Counter` object is private read-only. It is private since it cannot be accessed after the `Counter` object is created. It is read-only in the sense that methods of `Counter` are not able to change its value.
 
 ```
-# Constructor
+# Constructor of the class Counter
+#
+# @return an instance of Counter
 Counter <- function() {
 
   # object to return
@@ -235,4 +269,88 @@ setName <- function(person, newName) {
 }
 setName(peter, 'Peter Pan')
 print(peter$getName()) # prints 'Peter Pan' (setName works)
+```
+
+## Adding unit tests
+
+The object `UnitTester` provides 2 methods for adding and running unit tests, and 6 assertion methods.
+
+* addTest
+* runAllTests
+* assertEqual
+* assertFalse
+* assertNA
+* assertNull
+* assertThrow
+* assertTrue
+
+To illustrate the usage of UnitTester, the following are some example unit tests and the output of `runAllTests()`.
+
+```
+unitTester <- UnitTester()
+
+unitTester$addTest('Test 1', function() {
+  unitTester$assertEqual(1, 1)
+  stop('Error from Test 1')
+})
+
+unitTester$addTest('Test 2', function() {
+  unitTester$assertEqual(1, 1)
+})
+
+unitTester$addTest('Test 3', function() {
+  unitTester$assertEqual(1, 2)
+})
+
+unitTester$addTest('Test 4', function() {
+  unitTester$assertEqual(c(1, 2, 3), c(1, 2, 3))
+})
+
+unitTester$addTest('Test 5', function() {
+  unitTester$assertEqual(c(1, 2, 3), c(1, 3, 3))
+})
+
+unitTester$addTest('Test 6', function() {
+  unitTester$assertThrow(function() {
+    stop('Error from Test 6')
+  })
+})
+
+unitTester$addTest('Test 7', function() {
+  unitTester$assertThrow(function() {
+    # This function does not throw any error.
+  })
+})
+
+unitTester$runAllTests()
+```
+
+```
+Test 1
+Passed: expect = <1> and actual = <1>.
+
+Test 1
+Error: Error in testMethod(): Error from Test 1
+
+Test 2
+Passed: expect = <1> and actual = <1>.
+
+Test 3
+Failed: expect = <1> and actual = <2>.
+
+Test 4
+Passed: expect = <1,2,3> and actual = <1,2,3>.
+
+Test 5
+Failed: expect = <1,2,3> and actual = <1,3,3>.
+
+Test 6
+Passed: assertThrow successfully caught an error <Error in f(): Error from Test 6>.
+
+Test 7
+Failed: assertThrow did not catch any error.
+
+Number of passed assertions: 4
+Number of failed assertions: 3
+Number of unexpected errors: 1
 ```

@@ -1,6 +1,10 @@
+# This is an example to illustrate how one could add a private read-only field to a class.
+
 library(oo)
 
-# Constructor
+# Constructor of the class Counter
+#
+# @return an instance of Counter
 Counter <- function() {
 
   # object to return
@@ -19,7 +23,7 @@ Counter <- function() {
     count <- count + 1
   })
 
-  finalizeObject(counter, c('getCount', 'addCount'))
+  counter$finalize()
 }
 
 counter <- Counter()

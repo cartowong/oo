@@ -37,6 +37,9 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
   # @param includePrivate If TRUE, both public or private field may be returned.
   # @return the value of the field
   getField <- function(key, includePrivate) {
+    Precondition$checkIsString(key, 'key should be a string')
+    Precondition$checkIsBoolean(includePrivate, 'includePrivate should be a boolean')
+
     if (exists(key, envir = publicFieldEnv)) {
       return(get(key, envir = publicFieldEnv))
     }
@@ -52,6 +55,9 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
   # @param includePrivate If TRUE, both public or private method may be returned.
   # @return the method
   getMethod <- function(methodName, includePrivate) {
+    Precondition$checkIsString(methodName, 'methodName should be a string')
+    Precondition$checkIsBoolean(includePrivate, 'includePrivate should be a boolean')
+
     if (exists(methodName, envir = publicMethodEnv)) {
       return(get(methodName, envir = publicMethodEnv))
     }
@@ -67,6 +73,9 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
   # @param argName the given argument name
   # @return TRUE if the given function has an argument of the given name, and FALSE otherwise
   hasArg <- function(f, argName) {
+    Precondition$checkIsFunction(f, 'f should be a function')
+    Precondition$checkIsString(argName, 'argName should be a string')
+
     argName %in% names(formals(f))
   }
 
@@ -76,6 +85,9 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
   # @param f the function to be executed when the method is called
   # @return void
   addMethod <- function(methodName, f, envir) {
+    Precondition$checkIsString(methodName, 'methodName should be a string')
+    Precondition$checkIsFunction(f, 'f should be a function')
+
     publicMethodNames <- ls(envir = publicMethodEnv)
     privateMethodNames <- ls(envir = privateMethodEnv)
     if ((methodName %in% publicMethodNames) || (methodName %in% privateMethodNames)) {
@@ -111,6 +123,9 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
   # @param f the function to be executed when the method is called
   # @return void
   overrideMethod <- function(methodName, f) {
+    Precondition$checkIsString(methodName, 'methodName should be a string')
+    Precondition$checkIsFunction(f, 'f should be a function')
+
     publicMethodNames <- ls(envir = publicMethodEnv)
     privateMethodNames <- ls(envir = privateMethodEnv)
     if (!(methodName %in% publicMethodNames)) {
@@ -199,11 +214,13 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
 
   # setter
   object$set <- function(key, value) {
+    Precondition$checkIsString(key, 'key should be a string')
     assign(key, value, envir = publicFieldEnv)
   }
 
   # setter
   object$setPrivate <- function(key, value) {
+    Precondition$checkIsString(key, 'key should be a string')
     assign(key, value, envir = privateFieldEnv)
   }
 
