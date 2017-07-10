@@ -1,6 +1,21 @@
 #' Constructor of the class UnitTester.
 #'
 #' @return an instance of UnitTester
+#' @examples
+#' unitTester <- UnitTester()
+#'
+#' unitTester$addTest('Test 1', function() {
+#'   unitTester$assertEqual(1, 1)
+#' })
+#'
+#' unitTester$addTest('Test 2', function() {
+#'   unitTester$assertThrow(function() {
+#'     stop('Error from Test 2')
+#'   })
+#' })
+#'
+#' unitTester$runAllTests()
+#'
 #' @export
 UnitTester <- function(turnWarningsToErrors = TRUE) {
 
@@ -53,7 +68,7 @@ UnitTester <- function(turnWarningsToErrors = TRUE) {
 
     unitTester$addMethod('assertEqual', function(this, expect, actual, message = NA) {
       if (!TypeChecker$isNA(message)) {
-        Precondition$checkIsString(message)
+        Precondition$checkIsString(message, 'message should be a string')
       }
 
       testName <- this$get('currentTestName')
@@ -75,7 +90,7 @@ UnitTester <- function(turnWarningsToErrors = TRUE) {
       } else if (is.na(message)) {
         message <- sprintf('%s\nFailed: expect = <%s> and actual = <%s>.\n\n', testName, paste(expect, collapse = ','), paste(actual, collapse = ','))
       } else {
-        message <- sprint('%s\nFailed: %s', testName, message)
+        message <- sprintf('%s\nFailed: %s\n\n', testName, trimws(message))
       }
 
       cat(message)
@@ -99,7 +114,7 @@ UnitTester <- function(turnWarningsToErrors = TRUE) {
 
     unitTester$addMethod('assertThrow', function(this, f, message = NA) {
       if (!TypeChecker$isNA(message)) {
-        Precondition$checkIsString(message)
+        Precondition$checkIsString(message, 'message should be a string')
       }
 
       testName <- this$get('currentTestName')
@@ -125,7 +140,7 @@ UnitTester <- function(turnWarningsToErrors = TRUE) {
       } else if (is.na(message)) {
         message <- sprintf('%s\nFailed: assertThrow did not catch any error.\n\n', testName)
       } else {
-        message <- sprint('%s\nFailed: %s', testName, message)
+        message <- sprintf('%s\nFailed: %s', testName, message)
       }
 
       cat(message)

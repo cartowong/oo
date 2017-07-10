@@ -12,3 +12,19 @@ an instance of UnitTester
 \description{
 Constructor of the class UnitTester.
 }
+\examples{
+unitTester <- UnitTester()
+
+unitTester$addTest('Test 1', function() {
+  unitTester$assertEqual(1, 1)
+})
+
+unitTester$addTest('Test 2', function() {
+  unitTester$assertThrow(function() {
+    stop('Error from Test 2')
+  })
+})
+
+unitTester$runAllTests()
+
+}
