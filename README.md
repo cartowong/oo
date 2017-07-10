@@ -3,6 +3,7 @@ An R package to provide an object-oriented framework for R programming.
 
 ## Updates
 
+* version 3.11 (July 10, 2017): Minor code change.
 * version 3.1 (July 9, 2017): Fix bugs in UnitTester and add examples to its R documentation.
 * version 3.0 (July 4, 2017): Add TypeChecker, Precondition, and UnitTester.
 * version 2.0 (June 30, 2017): Add 'this' keyword. When adding or overriding a method, the 'this' object now has all the public and private methods registered. Fix a bug where a subclass cannot have its own private fields/methods. 

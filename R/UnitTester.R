@@ -86,9 +86,9 @@ UnitTester <- function(turnWarningsToErrors = TRUE) {
 
       # Output message
       if (passed) {
-        message <- sprintf('%s\nPassed: expect = <%s> and actual = <%s>.\n\n', testName, paste(expect, collapse = ','), paste(actual, collapse = ','))
+        message <- sprintf('%s\nPassed: expect = <%s> and actual = <%s>.\n\n', testName, toString(expect), toString(actual))
       } else if (is.na(message)) {
-        message <- sprintf('%s\nFailed: expect = <%s> and actual = <%s>.\n\n', testName, paste(expect, collapse = ','), paste(actual, collapse = ','))
+        message <- sprintf('%s\nFailed: expect = <%s> and actual = <%s>.\n\n', testName, toString(expect), toString(actual))
       } else {
         message <- sprintf('%s\nFailed: %s\n\n', testName, trimws(message))
       }
