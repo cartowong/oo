@@ -3,6 +3,7 @@ An R package to provide an object-oriented framework for R programming.
 
 ## Updates
 
+* version 3.2 (July 10, 2017): Object\$set(key, value) and Object\$setPrivate(key, value) return the key.
 * version 3.11 (July 10, 2017): Minor code change.
 * version 3.1 (July 9, 2017): Fix bugs in UnitTester and add examples to its R documentation.
 * version 3.0 (July 4, 2017): Add TypeChecker, Precondition, and UnitTester.
@@ -55,34 +56,34 @@ Person <- function(name, age) {
 
   Precondition$checkIsString(name, 'name should be a string')
   Precondition$checkIsNumeric(age, 'age should be numeric')
-  
+
   # object to return
   person <- Object()
 
   # public field
-  person$set('name', name)
+  nameKey <- person$set('name', name) # nameKey = 'name'
 
   # private field
-  person$setPrivate('age', age)
+  ageKey <- person$setPrivate('age', age) # ageKey = 'age'
 
   # getter
   person$addMethod('getName', function(this) {
-    this$get('name')
+    this$get(nameKey) # same as this$get('name')
   })
 
   # private getter
   person$addPrivateMethod('getAge', function(this) {
-    this$get('age')
+    this$get(ageKey) # same as this$get('age')
   })
 
   # setter
   person$addMethod('setName', function(this, value) {
-    this$set('name', value)
+    this$set(nameKey, value) # same as this$set('name', value)
   })
 
   # This method refers to the private field age.
   person$addMethod('isOver18', function(this) {
-    this$get('age') > 18
+    this$get(ageKey) > 18
   })
 
   # Note that this method calls getName(). If a subclass overrides getName(),
@@ -158,16 +159,16 @@ Student <- function(name, age, studentID) {
   Precondition$checkIsString(name, 'name should be a string')
   Precondition$checkIsNumeric(age, 'age should be numeric')
   Precondition$checkIsString(studentID, 'studentID should be a string')
-  
+
   # object to return
   student <- Person(name, age)$extend()
 
   # private field
-  student$setPrivate('studentID', studentID)
+  studentIDKey <- student$setPrivate('studentID', studentID) # studentIDKey = 'studentID'
 
   # add private method
   student$addPrivateMethod('getStudentID', function(this) {
-    this$get('studentID')
+    this$get(studentIDKey) # same as this$get('studentID')
   })
 
   # add public method

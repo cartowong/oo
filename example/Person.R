@@ -12,29 +12,29 @@ Person <- function(name, age) {
   person <- Object()
 
   # public field
-  person$set('name', name)
+  nameKey <- person$set('name', name) # nameKey = 'name'
 
   # private field
-  person$setPrivate('age', age)
+  ageKey <- person$setPrivate('age', age) # ageKey = 'age'
 
   # getter
   person$addMethod('getName', function(this) {
-    this$get('name')
+    this$get(nameKey) # same as this$get('name')
   })
 
   # private getter
   person$addPrivateMethod('getAge', function(this) {
-    this$get('age')
+    this$get(ageKey) # same as this$get('age')
   })
 
   # setter
   person$addMethod('setName', function(this, value) {
-    this$set('name', value)
+    this$set(nameKey, value) # same as this$set('name', value)
   })
 
   # This method refers to the private field age.
   person$addMethod('isOver18', function(this) {
-    this$get('age') > 18
+    this$get(ageKey) > 18
   })
 
   # Note that this method calls getName(). If a subclass overrides getName(),

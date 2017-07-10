@@ -216,12 +216,14 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
   object$set <- function(key, value) {
     Precondition$checkIsString(key, 'key should be a string')
     assign(key, value, envir = publicFieldEnv)
+    key
   }
 
   # setter
   object$setPrivate <- function(key, value) {
     Precondition$checkIsString(key, 'key should be a string')
     assign(key, value, envir = privateFieldEnv)
+    key
   }
 
   # list all public fields

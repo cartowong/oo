@@ -15,11 +15,11 @@ Student <- function(name, age, studentID) {
   student <- Person(name, age)$extend()
 
   # private field
-  student$setPrivate('studentID', studentID)
+  studentIDKey <- student$setPrivate('studentID', studentID) # studentIDKey = 'studentID'
 
   # add private method
   student$addPrivateMethod('getStudentID', function(this) {
-    this$get('studentID')
+    this$get(studentIDKey) # same as this$get('studentID')
   })
 
   # add public method
