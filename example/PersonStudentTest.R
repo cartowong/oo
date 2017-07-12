@@ -7,6 +7,9 @@ tester$addTest('Test Person creation', function() {
   peter <- Person('Peter', 12)
   tester$assertEqual(c('name'), peter$fieldNames())
   tester$assertEqual(c('getName', 'isOver18', 'sayHi', 'setName'), peter$methodNames())
+  tester$assertNull(peter$addMethod)
+  tester$assertNull(peter$overrideMethod)
+  tester$assertNull(peter$finalize)
 })
 
 tester$addTest('Test Person$get("name")', function() {

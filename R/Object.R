@@ -105,18 +105,6 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
     assign(methodName, g, envir = envir)
   }
 
-  # Extend an object.
-  #
-  # @return the extended object with its own private environments
-  extend <- function() {
-    createObject(
-      publicFieldEnv = publicFieldEnv,
-      privateFieldEnv = new.env(),
-      publicMethodEnv = publicMethodEnv,
-      privateMethodEnv = new.env()
-    )
-  }
-
   # Override a method
   #
   # @param methodName the method name
@@ -154,6 +142,20 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
       }
     }
     assign(methodName, g, envir = publicMethodEnv)
+  }
+
+  # Extend an object.
+  #
+  # @return the extended object with its own private environments
+  extend <- function() {
+    object <- createObject(
+      publicFieldEnv = publicFieldEnv,
+      privateFieldEnv = new.env(),
+      publicMethodEnv = publicMethodEnv,
+      privateMethodEnv = new.env()
+    )
+    object$overrideMethod <- overrideMethod
+    object
   }
 
   # Register methods so that they can be referenced as properties of the object.
@@ -198,6 +200,10 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
     object$get <- function(key) {
       getField(key, includePrivate = FALSE)
     }
+
+    # remove other non-public methods
+    object$addMethod <- NULL
+    object$finalize <- NULL
 
     object
   }
@@ -248,9 +254,6 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
 
   # extend an object
   object$extend <- extend
-
-  # override a method
-  object$overrideMethod <- overrideMethod
 
   # finalize an object
   object$finalize <- finalize

@@ -3,8 +3,9 @@ An R package to provide an object-oriented framework for R programming.
 
 ## Updates
 
+* version 4.1 (July 11, 2017): `Object$addMethod` and `Object$overrideMethod` are not accessible after `Object$finalize` is called (and until `Object$extend` is called). `Object$overrideMethod` is only accessible after `Object$extend` is called (and until `Object$finalize` is called).
 * version 4.0 (July 11, 2017): Precondition and TypeChecker are now objects.
-* version 3.2 (July 10, 2017): Object\$set(key, value) and Object\$setPrivate(key, value) return the key.
+* version 3.2 (July 10, 2017): `Object$set(key, value)` and `Object$setPrivate(key, value)` return the key.
 * version 3.11 (July 10, 2017): Minor code change.
 * version 3.1 (July 9, 2017): Fix bugs in UnitTester and add examples to its R documentation.
 * version 3.0 (July 4, 2017): Add TypeChecker, Precondition, and UnitTester.
