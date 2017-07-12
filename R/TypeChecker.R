@@ -98,12 +98,12 @@ isString <- function(x, allowNA = FALSE, allowNull = FALSE) {
 #' @return an instance of TypeChecker
 #'
 #' @examples
-#' TypeChecker$isNA(x)
-#' TypeChecker$isNull(x)
-#' TypeChecker$isBoolean(x)
-#' TypeChecker$isFunction(x)
-#' TypeChecker$isNumeric(x)
-#' TypeChecker$isString(x)
+#' TypeChecker()$isNA(x)
+#' TypeChecker()$isNull(x)
+#' TypeChecker()$isBoolean(x)
+#' TypeChecker()$isFunction(x)
+#' TypeChecker()$isNumeric(x)
+#' TypeChecker()$isString(x)
 #'
 #' @export
 TypeChecker <- function(allowNA = FALSE, allowNull = FALSE) {

@@ -21,11 +21,11 @@ value. A vector of two numeric values is not considered as numeric type. Concept
 is vector whose element type happens to be numeric.
 }
 \examples{
-TypeChecker$isNA(x)
-TypeChecker$isNull(x)
-TypeChecker$isBoolean(x)
-TypeChecker$isFunction(x)
-TypeChecker$isNumeric(x)
-TypeChecker$isString(x)
+TypeChecker()$isNA(x)
+TypeChecker()$isNull(x)
+TypeChecker()$isBoolean(x)
+TypeChecker()$isFunction(x)
+TypeChecker()$isNumeric(x)
+TypeChecker()$isString(x)
 
 }
