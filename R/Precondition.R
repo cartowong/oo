@@ -24,7 +24,7 @@ checkIsNull <- function(x, message = 'x should be Null') {
 
 # checkIsBoolean
 #
-# Throw an error if the given value is not null.
+# Throw an error if the given value is not a boolean.
 #
 # @param x the given value
 # @param message the error message
@@ -38,7 +38,7 @@ checkIsBoolean <- function(x, message = 'x should be a boolean', allowNA = FALSE
 
 # checkIsFunction
 #
-# Throw an error if the given value is not null.
+# Throw an error if the given value is not a function.
 #
 # @param x the given value
 # @param message the error message
@@ -52,7 +52,7 @@ checkIsFunction <- function(x, message = 'x should be a function', allowNA = FAL
 
 # checkIsNumeric
 #
-# Throw an error if the given value is not null.
+# Throw an error if the given value is not numeric.
 #
 # @param x the given value
 # @param message the error message
@@ -66,7 +66,7 @@ checkIsNumeric <- function(x, message = 'x should be a numeric value', allowNA =
 
 # checkIsString
 #
-# Throw an error if the given value is not null.
+# Throw an error if the given value is not a string.
 #
 # @param x the given value
 # @param message the error message
