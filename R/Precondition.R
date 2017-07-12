@@ -1,50 +1,130 @@
-#' Precondition
+# checkIsNA
+#
+# Throw an error if the given value is not NA.
+#
+# @param x the given value
+# @param message the error message
+checkIsNA <- function(x, message = 'x should be NA') {
+  if (!isNA(x)) {
+    stop(message)
+  }
+}
+
+# checkIsNull
+#
+# Throw an error if the given value is not null.
+#
+# @param x the given value
+# @param message the error message
+checkIsNull <- function(x, message = 'x should be Null') {
+  if (!isNull(x)) {
+    stop(message)
+  }
+}
+
+# checkIsBoolean
+#
+# Throw an error if the given value is not null.
+#
+# @param x the given value
+# @param message the error message
+# @param allowNA Should NA be allowed?
+# @param allowNull Should NULL be allowed?
+checkIsBoolean <- function(x, message = 'x should be a boolean', allowNA = FALSE, allowNull = FALSE) {
+  if (!isBoolean(x)) {
+    stop(message)
+  }
+}
+
+# checkIsFunction
+#
+# Throw an error if the given value is not null.
+#
+# @param x the given value
+# @param message the error message
+# @param allowNA Should NA be allowed?
+# @param allowNull Should NULL be allowed?
+checkIsFunction <- function(x, message = 'x should be a function', allowNA = FALSE, allowNull = FALSE) {
+  if (!isFunction(x)) {
+    stop(message)
+  }
+}
+
+# checkIsNumeric
+#
+# Throw an error if the given value is not null.
+#
+# @param x the given value
+# @param message the error message
+# @param allowNA Should NA be allowed?
+# @param allowNull Should NULL be allowed?
+checkIsNumeric <- function(x, message = 'x should be a numeric value', allowNA = FALSE, allowNull = FALSE) {
+  if (!isNumeric(x)) {
+    stop(message)
+  }
+}
+
+# checkIsString
+#
+# Throw an error if the given value is not null.
+#
+# @param x the given value
+# @param message the error message
+# @param allowNA Should NA be allowed?
+# @param allowNull Should NULL be allowed?
+checkIsString <- function(x, message = 'x should be a string', allowNA = FALSE, allowNull = FALSE) {
+  if (!isString(x)) {
+    stop(message)
+  }
+}
+
+#' Constructor of Precondition
 #'
 #' Utility functions for checking the type of an argument, based on TypeChecker in the same package.
 #' If the argument is not of the expected type, an error will be thrown. Usually, these utility
 #' functions are called at the begining of a function body.
 #'
+#' @param allowNA Should NA be allowed? The method checkIsNull ignores this parameter.
+#' @param allowNull Should NULL be allowed? The method checkIsNA ignores this parameter.
+#' @return an instance of Precondition
+#'
 #' @examples
+#' precondition <- Precondition()
 #' myFunction <- function(x) {
-#'   Precondition$isNumeric(x, 'x is not numeric')
+#'   precondition$isNumeric(x, 'x should be numeric')
 #'   ...
 #' }
 #'
 #' @export
-Precondition <- list(
-  checkIsNA = function(x, message = 'x should be NA') {
-    if (!TypeChecker$isNA(x)) {
-      stop(message)
-    }
-  },
+Precondition <- function(allowNA = FALSE, allowNull = FALSE) {
 
-  checkIsNull = function(x, message = 'x should be null') {
-    if (!TypeChecker$isNull(x)) {
-      stop(message)
-    }
-  },
+  checkIsBoolean(allowNA, message = 'allowNA should be a boolean')
+  checkIsBoolean(allowNull, message = 'allowNull should be a boolean')
 
-  checkIsBoolean = function(x, message = 'x should a boolean') {
-    if (!TypeChecker$isBoolean(x)) {
-      stop(message)
-    }
-  },
+  precondition <- Object()
 
-  checkIsString = function(x, message = 'x should be a string') {
-    if (!TypeChecker$isString(x)) {
-      stop(message)
-    }
-  },
+  allowNA <- allowNA
+  allowNull <- allowNull
 
-  checkIsNumeric = function(x, message = 'x should be a numeric value') {
-    if (!TypeChecker$isNumeric(x)) {
-      stop(message)
-    }
-  },
+  precondition$addMethod('checkIsNA', checkIsNA)
 
-  checkIsFunction = function(x, message = 'x should be a function') {
-    if (!TypeChecker$isFunction(x)) {
-      stop(message)
-    }
-  }
-)
+  precondition$addMethod('checkIsNull', checkIsNull)
+
+  precondition$addMethod('checkIsBoolean', function(x, message) {
+    checkIsBoolean(x, message, allowNA = allowNA, allowNull = allowNull)
+  })
+
+  precondition$addMethod('checkIsFunction', function(x, message) {
+    checkIsFunction(x, message, allowNA = allowNA, allowNull = allowNull)
+  })
+
+  precondition$addMethod('checkIsNumeric', function(x, message) {
+    checkIsNumeric(x, message, allowNA = allowNA, allowNull = allowNull)
+  })
+
+  precondition$addMethod('checkIsString', function(x, message) {
+    checkIsString(x, message, allowNA = allowNA, allowNull = allowNull)
+  })
+
+  precondition$finalize()
+}

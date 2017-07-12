@@ -32,8 +32,8 @@ UnitTester <- function(turnWarningsToErrors = TRUE) {
     unitTester$setPrivate('assertThrowErrorMessage', '')
 
     unitTester$addMethod('addTest', function(this, testName, testMethod) {
-      Precondition$checkIsString(testName, 'testName should be a string')
-      Precondition$checkIsFunction(testMethod, 'testMethod should be a function')
+      checkIsString(testName, 'testName should be a string')
+      checkIsFunction(testMethod, 'testMethod should be a function')
 
       testMethods <- this$get('testMethods')
       oldNames <- names(testMethods)
@@ -67,15 +67,15 @@ UnitTester <- function(turnWarningsToErrors = TRUE) {
     })
 
     unitTester$addMethod('assertEqual', function(this, expect, actual, message = NA) {
-      if (!TypeChecker$isNA(message)) {
-        Precondition$checkIsString(message, 'message should be a string')
+      if (!isNA(message)) {
+        checkIsString(message, 'message should be a string')
       }
 
       testName <- this$get('currentTestName')
 
       # Decide whether or not the test passes.
       result <- all.equal(expect, actual)
-      passed <- TypeChecker$isBoolean(result) && result
+      passed <- isBoolean(result) && result
 
       # Update passed/failed assertion count.
       if (passed) {
@@ -113,8 +113,8 @@ UnitTester <- function(turnWarningsToErrors = TRUE) {
     })
 
     unitTester$addMethod('assertThrow', function(this, f, message = NA) {
-      if (!TypeChecker$isNA(message)) {
-        Precondition$checkIsString(message, 'message should be a string')
+      if (!isNA(message)) {
+        checkIsString(message, 'message should be a string')
       }
 
       testName <- this$get('currentTestName')

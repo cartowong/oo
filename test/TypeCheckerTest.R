@@ -1,7 +1,7 @@
 tester <- UnitTester()
 
 tester$addTest('Test isNA', function() {
-  tester$assertTrue(TypeChecker$isNA(NA))
+  tester$assertTrue(TypeChecker()$isNA(NA))
 
   # These values are not NAs.
   values <- list(
@@ -12,12 +12,12 @@ tester$addTest('Test isNA', function() {
   )
 
   for (value in values) {
-    tester$assertFalse(TypeChecker$isNA(value), message = toString(sprintf('%s should not be NA', value)))
+    tester$assertFalse(TypeChecker()$isNA(value), message = toString(sprintf('%s should not be NA', value)))
   }
 })
 
 tester$addTest('Test isNull', function() {
-  tester$assertTrue(TypeChecker$isNull(NULL))
+  tester$assertTrue(TypeChecker()$isNull(NULL))
 
   # These values are not Nulls.
   values <- list(
@@ -27,7 +27,7 @@ tester$addTest('Test isNull', function() {
   )
 
   for (value in values) {
-    tester$assertFalse(TypeChecker$isNull(value), message = toString(sprintf('%s should not be null', value)))
+    tester$assertFalse(TypeChecker()$isNull(value), message = toString(sprintf('%s should not be null', value)))
   }
 })
 

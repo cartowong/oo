@@ -5,8 +5,8 @@
 #' @return an instance of Person
 Person <- function(name, age) {
 
-  Precondition$checkIsString(name, 'name should be a string')
-  Precondition$checkIsNumeric(age, 'age should be numeric')
+  Precondition()$checkIsString(name, 'name should be a string')
+  Precondition()$checkIsNumeric(age, 'age should be numeric')
 
   # object to return
   person <- Object()

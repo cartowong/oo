@@ -7,9 +7,9 @@ source('example/Person.R')
 #' @return an instance of Student
 Student <- function(name, age, studentID) {
 
-  Precondition$checkIsString(name, 'name should be a string')
-  Precondition$checkIsNumeric(age, 'age should be numeric')
-  Precondition$checkIsString(studentID, 'studentID should be a string')
+  Precondition()$checkIsString(name, 'name should be a string')
+  Precondition()$checkIsNumeric(age, 'age should be numeric')
+  Precondition()$checkIsString(studentID, 'studentID should be a string')
 
   # object to return
   student <- Person(name, age)$extend()

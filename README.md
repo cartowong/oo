@@ -3,6 +3,7 @@ An R package to provide an object-oriented framework for R programming.
 
 ## Updates
 
+* version 4.0 (July 11, 2017): Precondition and TypeChecker are now objects.
 * version 3.2 (July 10, 2017): Object\$set(key, value) and Object\$setPrivate(key, value) return the key.
 * version 3.11 (July 10, 2017): Minor code change.
 * version 3.1 (July 9, 2017): Fix bugs in UnitTester and add examples to its R documentation.
@@ -54,8 +55,8 @@ Here is the recommended pattern.
 #' @return an instance of Person
 Person <- function(name, age) {
 
-  Precondition$checkIsString(name, 'name should be a string')
-  Precondition$checkIsNumeric(age, 'age should be numeric')
+  Precondition()$checkIsString(name, 'name should be a string')
+  Precondition()$checkIsNumeric(age, 'age should be numeric')
 
   # object to return
   person <- Object()
@@ -124,20 +125,21 @@ The method `methodNames` returns the names of all public methods.
 
 These are two sets of utility functions added since version 3.0. They could be used to check and validate the type of function arguments. As of version 3.0, TypeChecker consists of 6 functions.
 
-* TypeChecker$isNA(x)
-* TypeChecker$isNull(x)
-* TypeChecker$isBoolean(x)
-* TypeChecker$isFunction(x)
-* TypeChecker$isNumeric(x)
-* TypeChecker$isString(x)
+* isNA(x)
+* isNull(x)
+* isBoolean(x)
+* isFunction(x)
+* isNumeric(x)
+* isString(x)
 
 Each of these functions returns a boolean (logical) indicating whether or not the given argument is of the expected type. Unlike, for example, is.numeric in the base package, the function isNumeric in TypeChecker checks whether the given object is a single numeric value. A vector of two numeric values is not considered as numeric type. Conceptually, its type is vector whose element type happens to be numeric.
 
 Precondition is a set of utility functions based on TypeChecker. If the argument is not of the expected type, an error will be thrown. Usually, these utility functions are called at the begining of a function body to validate the arguments.
 
 ```
+precondition <- Precondition() # By default, allowNA = FALSE and allowNull = FALSE.
 myFunction <- function(x) {
-  Precondition$isNumeric(x, 'x is not numeric')
+  precondition$isNumeric(x, 'x should be numeric')
   ...
 }
 ```
@@ -156,9 +158,9 @@ Extending a class is similar to defining a class except for two differences.
 #' @return an instance of Student
 Student <- function(name, age, studentID) {
 
-  Precondition$checkIsString(name, 'name should be a string')
-  Precondition$checkIsNumeric(age, 'age should be numeric')
-  Precondition$checkIsString(studentID, 'studentID should be a string')
+  Precondition()$checkIsString(name, 'name should be a string')
+  Precondition()$checkIsNumeric(age, 'age should be numeric')
+  Precondition()$checkIsString(studentID, 'studentID should be a string')
 
   # object to return
   student <- Person(name, age)$extend()
