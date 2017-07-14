@@ -63,7 +63,7 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
     checkIsString(key, 'key should be a string')
     checkIsBoolean(isPublic, 'isPublic should be a boolean')
     if (existsIn(key, publicFieldEnv) || existsIn(key, privateFieldEnv)) {
-      stop('The field %s already exists!', key)
+      stop(sprintf('The field %s already exists!', key))
     }
     if (isPublic) {
       assign(key, value, envir = publicFieldEnv)

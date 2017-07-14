@@ -115,6 +115,32 @@ tester$addTest('Test define private field and set it using this', function() {
   })
 })
 
+tester$addTest('Test set a non-existing field internally', function() {
+  tester$assertThrow(function() {
+    obj <- Object()
+    obj$set('nonExisting', 26)
+  })
+})
+
+tester$addTest('Test set a non-existing field internally using this', function() {
+  tester$assertThrow(function() {
+    obj <- Object()
+    obj$addMethod('setNonExisting', function(this) {
+      this$set('nonExisting', 26)
+    })
+    obj <- obj$finalize()
+    obj$setNonExisting()
+  })
+})
+
+tester$addTest('Test set a non-existing field externally', function() {
+  tester$assertThrow(function() {
+    obj <- Object()
+    obj <- obj$finalize()
+    obj$set('nonExisting', 26)
+  })
+})
+
 tester$addTest('Test define duplicate fields (public and public)', function() {
   tester$assertThrow(function() {
     obj <- Object()

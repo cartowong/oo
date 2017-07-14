@@ -3,6 +3,7 @@ An R package to provide an object-oriented framework for R programming.
 
 ## Updates
 
+* version 5.1 (July 14, 2017): Add unit tests and make minor code change.
 * version 5.0 (July 14, 2017): Add object methods `define`, `definePrivate` and remove object method `setPrivate`. As of version 5.0, the method `set` determines whether the field is accessible.
 * version 4.21 (July 14, 2017): Minor code change.
 * version 4.2 (July 13, 2017): Throw an error when `object$set(key, value)` is called and a private field with the same key already exists. Similarly, throw an error when `object$setPrivate(key, value)` is called and a public field with the same key already exists.
