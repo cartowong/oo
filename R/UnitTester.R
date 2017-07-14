@@ -30,6 +30,8 @@ UnitTester <- function(turnWarningsToErrors = TRUE) {
     unitTester$setPrivate('numErrorsCaught', 0)
     unitTester$setPrivate('assertThrowPassed', FALSE)
     unitTester$setPrivate('assertThrowErrorMessage', '')
+    unitTester$setPrivate('assertNotThrowPassed', FALSE)
+    unitTester$setPrivate('assertNotThrowErrorMessage', '')
 
     unitTester$addMethod('addTest', function(this, testName, testMethod) {
       checkIsString(testName, 'testName should be a string')
@@ -139,6 +141,40 @@ UnitTester <- function(turnWarningsToErrors = TRUE) {
         message <- sprintf('%s\nPassed: assertThrow successfully caught an error <%s>.\n\n', testName, this$get('assertThrowErrorMessage'))
       } else if (is.na(message)) {
         message <- sprintf('%s\nFailed: assertThrow did not catch any error.\n\n', testName)
+      } else {
+        message <- sprintf('%s\nFailed: %s', testName, message)
+      }
+
+      cat(message)
+    })
+
+    unitTester$addMethod('assertNotThrow', function(this, f, message = NA) {
+      if (!isNA(message)) {
+        checkIsString(message, 'message should be a string')
+      }
+
+      testName <- this$get('currentTestName')
+      this$setPrivate('assertNotThrowPassed', TRUE)
+      tryCatch({
+        f()
+      }, error = function(err) {
+        this$setPrivate('assertNotThrowPassed', FALSE)
+        this$setPrivate('assertNotThrowErrorMessage', trimws(err))
+      })
+
+      # Update passed/failed assertion count.
+      passed <- this$get('assertNotThrowPassed')
+      if (passed) {
+        this$setPrivate('numAssertionsPassed', this$get('numAssertionsPassed') + 1)
+      } else {
+        this$setPrivate('numAssertionsFailed', this$get('numAssertionsFailed') + 1)
+      }
+
+      # Output message
+      if (passed) {
+        message <- sprintf('%s\nPassed: assertNotThrow did not catch any error.\n\n', testName, this$get('assertNotThrowErrorMessage'))
+      } else if (is.na(message)) {
+        message <- sprintf('%s\nFailed: assertNotThrow caught an error.\n\n', testName)
       } else {
         message <- sprintf('%s\nFailed: %s', testName, message)
       }

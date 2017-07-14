@@ -40,10 +40,10 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
     checkIsString(key, 'key should be a string')
     checkIsBoolean(includePrivate, 'includePrivate should be a boolean')
 
-    if (exists(key, envir = publicFieldEnv)) {
+    if (key %in% ls(envir = publicFieldEnv)) {
       return(get(key, envir = publicFieldEnv))
     }
-    if (includePrivate && exists(key, envir = privateFieldEnv)) {
+    if (includePrivate && (key %in% ls(envir = privateFieldEnv))) {
       return(get(key, envir = privateFieldEnv))
     }
     stop(sprintf('The field %s does not exist in the current object!', key))
@@ -58,10 +58,10 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
     checkIsString(methodName, 'methodName should be a string')
     checkIsBoolean(includePrivate, 'includePrivate should be a boolean')
 
-    if (exists(methodName, envir = publicMethodEnv)) {
+    if (methodName %in% ls(envir = publicMethodEnv)) {
       return(get(methodName, envir = publicMethodEnv))
     }
-    if (includePrivate && exists(methodName, envir = privateMethodEnv)) {
+    if (includePrivate && (methodName %in% ls(envir = privateMethodEnv))) {
       return(get(methodName, envir = privateMethodEnv))
     }
     stop(sprintf('The method %s does not exist in the current object!', methodName))
@@ -163,7 +163,7 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
   # @return the object with methods registered
   registerMethods <- function(object, methodNames) {
     for (methodName in methodNames) {
-      if (!exists(methodName, envir = publicMethodEnv) && !exists(methodName, envir = privateMethodEnv)) {
+      if (!(methodName %in% ls(envir = publicMethodEnv)) && !(methodName %in% ls(envir = privateMethodEnv))) {
         stop(sprintf('Registering a non-existing method %s!', methodName))
       }
 
@@ -223,7 +223,7 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
     checkIsString(key, 'key should be a string')
 
     # Throw an error if the field already exists as a private field.
-    if (exists(key, envir = privateFieldEnv)) {
+    if (key %in% ls(envir = privateFieldEnv)) {
       stop(sprintf('The private field %s already exists. Make it public or call setPrivate(key, value).', key))
     }
 
@@ -236,7 +236,7 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
     checkIsString(key, 'key should be a string')
 
     # Throw an error if the field already exists as a public field.
-    if (exists(key, envir = publicFieldEnv)) {
+    if (key %in% ls(envir = publicFieldEnv)) {
       stop(sprintf('The public field %s already exists. Make it private or call set(key, value).', key))
     }
 

@@ -16,4 +16,24 @@ tester$addTest('Test set with a private field', function() {
   })
 })
 
+tester$addTest('Test duplicate method', function() {
+  tester$assertThrow(function() {
+    obj <- Object()
+    obj$addMethod('foo', function() {})
+    obj$addMethod('foo', function() {}) # add a duplicate method
+  })
+})
+
+tester$addTest('Test duplicate key', function() {
+  tester$assertNotThrow(function() {
+    ClassA <- function() {
+      classA <- Object()
+      classA$setPrivate('x', NA)
+      classA$finalize()
+    }
+    obj1 <- ClassA()
+    obj2 <- ClassA() # This should not throw an error.
+  })
+})
+
 tester$runAllTests()
