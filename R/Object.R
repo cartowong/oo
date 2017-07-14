@@ -221,6 +221,12 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
   # setter
   object$set <- function(key, value) {
     checkIsString(key, 'key should be a string')
+
+    # Throw an error if the field already exists as a private field.
+    if (exists(key, envir = privateFieldEnv)) {
+      stop(sprintf('The private field %s already exists. Make it public or call setPrivate(key, value).', key))
+    }
+
     assign(key, value, envir = publicFieldEnv)
     key
   }
@@ -228,6 +234,12 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
   # setter
   object$setPrivate <- function(key, value) {
     checkIsString(key, 'key should be a string')
+
+    # Throw an error if the field already exists as a public field.
+    if (exists(key, envir = publicFieldEnv)) {
+      stop(sprintf('The public field %s already exists. Make it private or call set(key, value).', key))
+    }
+
     assign(key, value, envir = privateFieldEnv)
     key
   }

@@ -3,6 +3,7 @@ An R package to provide an object-oriented framework for R programming.
 
 ## Updates
 
+* version 4.2 (July 13, 2017): Throw an error when `object$set(key, value)` is called and a private field with the same key already exists. Similarly, throw an error when `object$setPrivate(key, value)` is called and a public field with the same key already exists.
 * version 4.1 (July 11, 2017): `Object$addMethod` and `Object$overrideMethod` are not accessible after `Object$finalize` is called (and until `Object$extend` is called). `Object$overrideMethod` is only accessible after `Object$extend` is called (and until `Object$finalize` is called).
 * version 4.0 (July 11, 2017): Precondition and TypeChecker are now objects.
 * version 3.2 (July 10, 2017): `Object$set(key, value)` and `Object$setPrivate(key, value)` return the key.
