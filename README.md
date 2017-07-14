@@ -280,13 +280,14 @@ print(peter$getName()) # prints 'Peter Pan' (setName works)
 
 ## Adding unit tests
 
-The object `UnitTester` provides 2 methods for adding and running unit tests, and 6 assertion methods.
+The object `UnitTester` provides 2 methods for adding and running unit tests, and 7 assertion methods.
 
 * addTest
 * runAllTests
 * assertEqual
 * assertFalse
 * assertNA
+* assertNotThrow
 * assertNull
 * assertThrow
 * assertTrue
