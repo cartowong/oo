@@ -12,10 +12,10 @@ Person <- function(name, age) {
   person <- Object()
 
   # public field
-  nameKey <- person$set('name', name) # nameKey = 'name'
+  nameKey <- person$define('name', name) # nameKey = 'name'
 
   # private field
-  ageKey <- person$setPrivate('age', age) # ageKey = 'age'
+  ageKey <- person$definePrivate('age', age) # ageKey = 'age'
 
   # getter
   person$addMethod('getName', function(this) {

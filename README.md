@@ -3,6 +3,7 @@ An R package to provide an object-oriented framework for R programming.
 
 ## Updates
 
+* version 5.0 (July 14, 2017): Add object methods `define`, `definePrivate` and remove object method `setPrivate`. As of version 5.0, the method `set` determines whether the field is accessible.
 * version 4.21 (July 14, 2017): Minor code change.
 * version 4.2 (July 13, 2017): Throw an error when `object$set(key, value)` is called and a private field with the same key already exists. Similarly, throw an error when `object$setPrivate(key, value)` is called and a public field with the same key already exists.
 * version 4.1 (July 11, 2017): `Object$addMethod` and `Object$overrideMethod` are not accessible after `Object$finalize` is called (and until `Object$extend` is called). `Object$overrideMethod` is only accessible after `Object$extend` is called (and until `Object$finalize` is called).
@@ -37,9 +38,10 @@ library(oo)
 ## Basic pattern
 This package provides a function `Object()` as the starting point of object-oriented programming. Any instance of `Object` has the following properties attached.
 
+* define<br/>Define a public field.
+* definePrivate<br/>Define a private field.
 * get<br/>This can be used to retrieve the value of a field. If it is called within the body of a method (probably through the `this` keyword, e.g. `this$get('name')`), both public and private fields are accessible. Otherwise, only public fields are accessible.
-* set<br/>This can be used to set the value of a **public** field.
-* setPrivate<br/>This can be used to set the value of a **private** field.
+* set<br/>This can be used to set the value of a field. If it is called within the body of a method (probably through the `this` keyword, e.g. `this$get('name')`), both public and private fields are accessible. Otherwise, only public fields are accessible.
 * fieldNames<br/>List out the names of all public fields.
 * methodNames<br/>List out the names of all public methods.
 * addMethod<br/>Add a **public** method to the current object.
@@ -65,10 +67,10 @@ Person <- function(name, age) {
   person <- Object()
 
   # public field
-  nameKey <- person$set('name', name) # nameKey = 'name'
+  nameKey <- person$define('name', name) # nameKey = 'name'
 
   # private field
-  ageKey <- person$setPrivate('age', age) # ageKey = 'age'
+  ageKey <- person$definePrivate('age', age) # ageKey = 'age'
 
   # getter
   person$addMethod('getName', function(this) {
@@ -169,7 +171,7 @@ Student <- function(name, age, studentID) {
   student <- Person(name, age)$extend()
 
   # private field
-  studentIDKey <- student$setPrivate('studentID', studentID) # studentIDKey = 'studentID'
+  studentIDKey <- student$definePrivate('studentID', studentID) # studentIDKey = 'studentID'
 
   # add private method
   student$addPrivateMethod('getStudentID', function(this) {

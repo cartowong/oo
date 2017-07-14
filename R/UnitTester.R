@@ -23,15 +23,15 @@ UnitTester <- function(turnWarningsToErrors = TRUE) {
 
     turnWarningsToErrors <- turnWarningsToErrors
 
-    unitTester$setPrivate('testMethods', list())
-    unitTester$setPrivate('currentTestName', '')
-    unitTester$setPrivate('numAssertionsPassed', 0)
-    unitTester$setPrivate('numAssertionsFailed', 0)
-    unitTester$setPrivate('numErrorsCaught', 0)
-    unitTester$setPrivate('assertThrowPassed', FALSE)
-    unitTester$setPrivate('assertThrowErrorMessage', '')
-    unitTester$setPrivate('assertNotThrowPassed', FALSE)
-    unitTester$setPrivate('assertNotThrowErrorMessage', '')
+    unitTester$definePrivate('testMethods', list())
+    unitTester$definePrivate('currentTestName', '')
+    unitTester$definePrivate('numAssertionsPassed', 0)
+    unitTester$definePrivate('numAssertionsFailed', 0)
+    unitTester$definePrivate('numErrorsCaught', 0)
+    unitTester$definePrivate('assertThrowPassed', FALSE)
+    unitTester$definePrivate('assertThrowErrorMessage', '')
+    unitTester$definePrivate('assertNotThrowPassed', FALSE)
+    unitTester$definePrivate('assertNotThrowErrorMessage', '')
 
     unitTester$addMethod('addTest', function(this, testName, testMethod) {
       checkIsString(testName, 'testName should be a string')
@@ -41,7 +41,7 @@ UnitTester <- function(turnWarningsToErrors = TRUE) {
       oldNames <- names(testMethods)
       testMethods <- append(testMethods, testMethod)
       names(testMethods) <- append(oldNames, testName)
-      this$setPrivate('testMethods', testMethods)
+      this$set('testMethods', testMethods)
     })
 
     unitTester$addMethod('runAllTests', function(this) {
@@ -51,12 +51,12 @@ UnitTester <- function(turnWarningsToErrors = TRUE) {
 
       testMethods <- this$get('testMethods')
       for (testName in names(testMethods)) {
-        this$setPrivate('currentTestName', testName)
+        this$set('currentTestName', testName)
         testMethod <- testMethods[[testName]]
         tryCatch({
           testMethod()
         }, error = function(err) {
-          this$setPrivate('numErrorsCaught', this$get('numErrorsCaught') + 1)
+          this$set('numErrorsCaught', this$get('numErrorsCaught') + 1)
 
           message <- sprintf('%s\nError: %s\n\n', testName, trimws(err))
           cat(message)
@@ -81,9 +81,9 @@ UnitTester <- function(turnWarningsToErrors = TRUE) {
 
       # Update passed/failed assertion count.
       if (passed) {
-        this$setPrivate('numAssertionsPassed', this$get('numAssertionsPassed') + 1)
+        this$set('numAssertionsPassed', this$get('numAssertionsPassed') + 1)
       } else {
-        this$setPrivate('numAssertionsFailed', this$get('numAssertionsFailed') + 1)
+        this$set('numAssertionsFailed', this$get('numAssertionsFailed') + 1)
       }
 
       # Output message
@@ -120,20 +120,20 @@ UnitTester <- function(turnWarningsToErrors = TRUE) {
       }
 
       testName <- this$get('currentTestName')
-      this$setPrivate('assertThrowPassed', FALSE)
+      this$set('assertThrowPassed', FALSE)
       tryCatch({
         f()
       }, error = function(err) {
-        this$setPrivate('assertThrowPassed', TRUE)
-        this$setPrivate('assertThrowErrorMessage', trimws(err))
+        this$set('assertThrowPassed', TRUE)
+        this$set('assertThrowErrorMessage', trimws(err))
       })
 
       # Update passed/failed assertion count.
       passed <- this$get('assertThrowPassed')
       if (passed) {
-        this$setPrivate('numAssertionsPassed', this$get('numAssertionsPassed') + 1)
+        this$set('numAssertionsPassed', this$get('numAssertionsPassed') + 1)
       } else {
-        this$setPrivate('numAssertionsFailed', this$get('numAssertionsFailed') + 1)
+        this$set('numAssertionsFailed', this$get('numAssertionsFailed') + 1)
       }
 
       # Output message
@@ -154,27 +154,27 @@ UnitTester <- function(turnWarningsToErrors = TRUE) {
       }
 
       testName <- this$get('currentTestName')
-      this$setPrivate('assertNotThrowPassed', TRUE)
+      this$set('assertNotThrowPassed', TRUE)
       tryCatch({
         f()
       }, error = function(err) {
-        this$setPrivate('assertNotThrowPassed', FALSE)
-        this$setPrivate('assertNotThrowErrorMessage', trimws(err))
+        this$set('assertNotThrowPassed', FALSE)
+        this$set('assertNotThrowErrorMessage', trimws(err))
       })
 
       # Update passed/failed assertion count.
       passed <- this$get('assertNotThrowPassed')
       if (passed) {
-        this$setPrivate('numAssertionsPassed', this$get('numAssertionsPassed') + 1)
+        this$set('numAssertionsPassed', this$get('numAssertionsPassed') + 1)
       } else {
-        this$setPrivate('numAssertionsFailed', this$get('numAssertionsFailed') + 1)
+        this$set('numAssertionsFailed', this$get('numAssertionsFailed') + 1)
       }
 
       # Output message
       if (passed) {
-        message <- sprintf('%s\nPassed: assertNotThrow did not catch any error.\n\n', testName, this$get('assertNotThrowErrorMessage'))
+        message <- sprintf('%s\nPassed: assertNotThrow did not catch any error.\n\n', testName)
       } else if (is.na(message)) {
-        message <- sprintf('%s\nFailed: assertNotThrow caught an error.\n\n', testName)
+        message <- sprintf('%s\nFailed: assertNotThrow caught an error <%s>.\n\n', testName, this$get('assertNotThrowErrorMessage'))
       } else {
         message <- sprintf('%s\nFailed: %s', testName, message)
       }

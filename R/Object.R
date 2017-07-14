@@ -3,7 +3,7 @@
 #' This function should be called at the begining of a constructor function to create an object.
 #'
 #' @return an object.
-#' @details Any object has the methods "get", "set", "setPrivate", "addMethod", "addPrivateMethod", "extend", "overrideMethod", and "finalize". For more details, see http://www.github.com/cartowong/oo.
+#' @details Any object has the methods "define", "definePrivate", "get", "set", "fieldNames", "methodNames", "addMethod", "addPrivateMethod", "extend", and "finalize". Some of these methods are removed after finalize() is called. For more details, see http://www.github.com/cartowong/oo.
 #' @export
 Object <- function() {
   createObject(
@@ -33,12 +33,12 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
 
   # Check if a variable exists in a given environment
   #
-  # @param name the name of the variable
+  # @param key the name of the variable
   # @param envir the environment in which we search for the variable
   # @return TRUE if the variable exists in the environment, and FALSE otherwise.
-  existsIn <- function(name, envir) {
-    checkIsString(name, 'name should be a string')
-    name %in% ls(envir = envir)
+  existsIn <- function(key, envir) {
+    checkIsString(key, 'key should be a string')
+    key %in% ls(envir = envir)
   }
 
   # Does the given function have an argument of the given name?
@@ -53,6 +53,26 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
     argName %in% names(formals(f))
   }
 
+  # Define a field.
+  #
+  # @param key the name of the field
+  # @param value the value of the field
+  # @param isPublic Is it a public field?
+  # @return the key
+  defineField <- function(key, value, isPublic) {
+    checkIsString(key, 'key should be a string')
+    checkIsBoolean(isPublic, 'isPublic should be a boolean')
+    if (existsIn(key, publicFieldEnv) || existsIn(key, privateFieldEnv)) {
+      stop('The field %s already exists!', key)
+    }
+    if (isPublic) {
+      assign(key, value, envir = publicFieldEnv)
+    } else {
+      assign(key, value, envir = privateFieldEnv)
+    }
+    key
+  }
+
   # Get the value of a field
   #
   # @param key the name of the field
@@ -64,9 +84,27 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
 
     if (existsIn(key, publicFieldEnv)) {
       return(get(key, envir = publicFieldEnv))
-    }
-    if (includePrivate && existsIn(key, privateFieldEnv)) {
+    } else if (includePrivate && existsIn(key, privateFieldEnv)) {
       return(get(key, envir = privateFieldEnv))
+    }
+    stop(sprintf('The field %s does not exist in the current object or it is private!', key))
+  }
+
+  # Set the value of a field
+  #
+  # @param key the name of the field
+  # @param includePrivate If TRUE, both public or private field may be set.
+  # @return the value of the field
+  setField <- function(key, value, includePrivate) {
+    checkIsString(key, 'key should be a string')
+    checkIsBoolean(includePrivate, 'includePrivate should be a boolean')
+
+    if (existsIn(key, publicFieldEnv)) {
+      assign(key, value, envir = publicFieldEnv)
+      return(value)
+    } else if (includePrivate && existsIn(key, privateFieldEnv)) {
+      assign(key, value, envir = privateFieldEnv)
+      return(value)
     }
     stop(sprintf('The field %s does not exist in the current object or it is private!', key))
   }
@@ -203,7 +241,9 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
     object <- registerMethods(object, object$methodNames())
 
     # remove private setter
-    object$setPrivate <- NULL
+    object$set <- function(key, value) {
+      setField(key, value, includePrivate = FALSE)
+    }
     object$addPrivateMethod <- NULL
 
     # remove private getter
@@ -212,6 +252,8 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
     }
 
     # remove other non-public methods
+    object$define <- NULL
+    object$definePrivate <- NULL
     object$addMethod <- NULL
     object$finalize <- NULL
 
@@ -223,6 +265,16 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
   # object to return
   object <- list()
 
+  # define a public field
+  object$define <- function(key, value = NA) {
+    defineField(key, value, isPublic = TRUE)
+  }
+
+  # define a private field
+  object$definePrivate <- function(key, value = NA) {
+    defineField(key, value, isPublic = FALSE)
+  }
+
   # getter
   object$get <- function(key) {
     getField(key, includePrivate = TRUE)
@@ -230,28 +282,7 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
 
   # setter
   object$set <- function(key, value) {
-    checkIsString(key, 'key should be a string')
-
-    # Throw an error if the field already exists as a private field.
-    if (existsIn(key, privateFieldEnv)) {
-      stop(sprintf('The private field %s already exists. Make it public or call setPrivate(key, value).', key))
-    }
-
-    assign(key, value, envir = publicFieldEnv)
-    key
-  }
-
-  # setter
-  object$setPrivate <- function(key, value) {
-    checkIsString(key, 'key should be a string')
-
-    # Throw an error if the field already exists as a public field.
-    if (existsIn(key, publicFieldEnv)) {
-      stop(sprintf('The public field %s already exists. Make it private or call set(key, value).', key))
-    }
-
-    assign(key, value, envir = privateFieldEnv)
-    key
+    setField(key, value, includePrivate = TRUE)
   }
 
   # list all public fields
