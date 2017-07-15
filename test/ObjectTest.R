@@ -199,7 +199,45 @@ tester$addTest('Test different instances do not share public fields', function()
   tester$assertEqual(c('person1', 'person2'), c(person1$get('name'), person2$get('name')))
 })
 
-tester$addTest('Test override a method', function() {
+tester$addTest('Test override a public field', function() {
+  ClassA <- function() {
+    classA <- Object()
+    classA$define('data', 26)
+    classA$addMethod('getData', function(this) {
+      this$get('data')
+    })
+    classA$finalize()
+  }
+  ClassB <- function() {
+    classB<- ClassA()$extend()
+    classB$set('data', 27)
+    classB$finalize()
+  }
+  a <- ClassA()
+  b <- ClassB()
+  tester$assertEqual(c(26, 26, 27, 27), c(a$get('data'), a$getData(), b$get('data'), b$getData()))
+})
+
+tester$addTest('Test private field cannot be overriden by adding a public field with the same name in a subclass', function() {
+  ClassA <- function() {
+    classA <- Object()
+    classA$definePrivate('data', 26)
+    classA$addMethod('getData', function(this) {
+      this$get('data')
+    })
+    classA$finalize()
+  }
+  ClassB <- function() {
+    classB<- ClassA()$extend()
+    classB$define('data', 27)
+    classB$finalize()
+  }
+  a <- ClassA()
+  b <- ClassB()
+  tester$assertEqual(c(26, 27, 26), c(a$getData(), b$get('data'), b$getData()))
+})
+
+tester$addTest('Test override a public method', function() {
   ClassA <- function() {
     classA <- Object()
     classA$addMethod('foo', function() {
@@ -218,6 +256,27 @@ tester$addTest('Test override a method', function() {
     classB$finalize()
   }
   tester$assertEqual(c(1, 2, 1, 2), c(ClassA()$foo(), ClassB()$foo(), ClassA()$callFoo(), ClassB()$callFoo()))
+})
+
+tester$addTest('Test private method cannot be overriden by adding a method with the same name in a subclass', function() {
+  ClassA <- function() {
+    classA <- Object()
+    classA$addPrivateMethod('foo', function() {
+      return(1)
+    })
+    classA$addMethod('callFoo', function(this) {
+      this$foo()
+    })
+    classA$finalize()
+  }
+  ClassB <- function() {
+    classB<- ClassA()$extend()
+    classB$addMethod('foo', function() {
+      return(2)
+    })
+    classB$finalize()
+  }
+  tester$assertEqual(c(1, 2, 1), c(ClassA()$callFoo(), ClassB()$foo(), ClassB()$callFoo()))
 })
 
 tester$addTest('Test use addMethod instead of overrideMethod', function() {

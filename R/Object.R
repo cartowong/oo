@@ -82,11 +82,15 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
     checkIsString(key, 'key should be a string')
     checkIsBoolean(includePrivate, 'includePrivate should be a boolean')
 
-    if (existsIn(key, publicFieldEnv)) {
-      return(get(key, envir = publicFieldEnv))
-    } else if (includePrivate && existsIn(key, privateFieldEnv)) {
+    # The order of these two if statements cannot be switched. A subclass may define
+    # a public field which has the same name as a private field in its superclass.
+    if (includePrivate && existsIn(key, privateFieldEnv)) {
       return(get(key, envir = privateFieldEnv))
     }
+    if (existsIn(key, publicFieldEnv)) {
+      return(get(key, envir = publicFieldEnv))
+    }
+
     stop(sprintf('The field %s does not exist in the current object or it is private!', key))
   }
 
@@ -99,13 +103,17 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
     checkIsString(key, 'key should be a string')
     checkIsBoolean(includePrivate, 'includePrivate should be a boolean')
 
-    if (existsIn(key, publicFieldEnv)) {
-      assign(key, value, envir = publicFieldEnv)
-      return(value)
-    } else if (includePrivate && existsIn(key, privateFieldEnv)) {
+    # The order of these two if statements cannot be switched. A subclass may define
+    # a public field which has the same name as a private field in its superclass.
+    if (includePrivate && existsIn(key, privateFieldEnv)) {
       assign(key, value, envir = privateFieldEnv)
       return(value)
     }
+    if (existsIn(key, publicFieldEnv)) {
+      assign(key, value, envir = publicFieldEnv)
+      return(value)
+    }
+
     stop(sprintf('The field %s does not exist in the current object or it is private!', key))
   }
 
@@ -118,12 +126,15 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
     checkIsString(methodName, 'methodName should be a string')
     checkIsBoolean(includePrivate, 'includePrivate should be a boolean')
 
-    if (existsIn(methodName, publicMethodEnv)) {
-      return(get(methodName, envir = publicMethodEnv))
-    }
+    # The order of these two if statements cannot be switched. A subclass may define
+    # a public method which has the same name as a private method in its superclass.
     if (includePrivate && existsIn(methodName, privateMethodEnv)) {
       return(get(methodName, envir = privateMethodEnv))
     }
+    if (existsIn(methodName, publicMethodEnv)) {
+      return(get(methodName, envir = publicMethodEnv))
+    }
+
     stop(sprintf('The method %s does not exist in the current object or it is private!', methodName))
   }
 
