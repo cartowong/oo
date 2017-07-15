@@ -3,6 +3,7 @@ An R package to provide an object-oriented framework for R programming.
 
 ## Updates
 
+* version 5.3 (July 15, 2017): Add a boolean argument `hidePassed` to `UnitTester$runAllTests()`.
 * version 5.2 (July 14, 2017): Fix a subtle bug to make sure a private field/method cannot be overriden by defining/adding a public field/method with the same name in a subclass.
 * version 5.1 (July 14, 2017): Add unit tests and make minor code change.
 * version 5.0 (July 14, 2017): Add object methods `define`, `definePrivate` and remove object method `setPrivate`. As of version 5.0, the method `set` determines whether the field is accessible.
@@ -297,7 +298,7 @@ The object `UnitTester` provides 2 methods for adding and running unit tests, an
 * assertThrow
 * assertTrue
 
-To illustrate the usage of UnitTester, the following are some example unit tests and the output of `runAllTests()`.
+To illustrate the usage of UnitTester, the following are some example unit tests and the output of `runAllTests(hidePassed = FALSE)`. The boolean parameter `hidePassed` is added since version 5.3 to hide the passed test results, in case you are only interested in the failed assertions and the unexpected errors.
 
 ```
 unitTester <- UnitTester()

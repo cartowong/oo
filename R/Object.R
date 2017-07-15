@@ -138,6 +138,23 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
     stop(sprintf('The method %s does not exist in the current object or it is private!', methodName))
   }
 
+  # Get this.
+  #
+  # @return the 'this' object to be used in method body.
+  getThis <- function() {
+    publicMethodNames <- ls(envir = publicMethodEnv)
+    privateMethodNames <- ls(envir = privateMethodEnv)
+    object <- registerMethods(object, privateMethodNames)
+    object <- registerMethods(object, publicMethodNames)
+    object$define <- NULL
+    object$definePrivate <- NULL
+    object$addMethod <- NULL
+    object$addPrivateMethod <- NULL
+    object$extend <- NULL
+    object$finalize <- NULL
+    object
+  }
+
   # Add a method to this object.
   #
   # @param methodName the name of the method
@@ -147,15 +164,12 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
     checkIsString(methodName, 'methodName should be a string')
     checkIsFunction(f, 'f should be a function')
 
-    publicMethodNames <- ls(envir = publicMethodEnv)
-    privateMethodNames <- ls(envir = privateMethodEnv)
-    if ((methodName %in% publicMethodNames) || (methodName %in% privateMethodNames)) {
+    if (existsIn(methodName, publicMethodEnv) || existsIn(methodName, privateMethodEnv)) {
       stop(sprintf('The method %s already exists. Use another method name or use overrideMethod.', methodName))
     }
     g <- function(...) {
       if (hasArg(f, 'this')) {
-        object <- registerMethods(object, privateMethodNames)
-        object <- registerMethods(object, publicMethodNames)
+        object <- getThis()
         f(this = object, ...)
       } else {
         f(...)
@@ -173,18 +187,14 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
     checkIsString(methodName, 'methodName should be a string')
     checkIsFunction(f, 'f should be a function')
 
-    publicMethodNames <- ls(envir = publicMethodEnv)
-    privateMethodNames <- ls(envir = privateMethodEnv)
-    if (!(methodName %in% publicMethodNames)) {
+    if (!existsIn(methodName, publicMethodEnv)) {
       stop(sprintf('Overriding a non-existing or private method %s', methodName))
     }
 
     parentMethod <- get(methodName, envir = publicMethodEnv)
     g <- function(...) {
       if (hasArg(f, 'this')) {
-        object <- registerMethods(object, privateMethodNames)
-        object <- registerMethods(object, publicMethodNames)
-
+        object <- getThis()
         if (hasArg(f, 'parentMethod')) {
           f(this = object, parentMethod = parentMethod, ...)
         }

@@ -15,6 +15,40 @@ tester$addTest('Test object properties', function() {
   tester$assertEqual(c('publicMethod'), obj$methodNames())
 })
 
+tester$addTest('Test extended object properties', function() {
+  ClassA <- function() {
+    classA <- Object()
+    classA$define('publicField')
+    classA$definePrivate('privateField')
+    classA$addMethod('publicMethod', function() {})
+    classA$addPrivateMethod('privateMethod', function() {})
+    classA$finalize()
+  }
+  a <- ClassA()
+  b <- ClassA()$extend()
+  tester$assertEqual(c('get', 'set', 'fieldNames', 'methodNames', 'extend', 'publicMethod'), names(a))
+  tester$assertEqual(c('define', 'definePrivate', 'get', 'set', 'fieldNames', 'methodNames', 'addMethod', 'addPrivateMethod', 'extend', 'finalize', 'overrideMethod'), names(b))
+})
+
+tester$addTest('Test extended this properties', function() {
+  ClassA <- function() {
+    classA <- Object()
+    classA$define('publicField')
+    classA$definePrivate('privateField')
+    classA$addMethod('publicMethod', function() {})
+    classA$addPrivateMethod('privateMethod', function() {})
+    classA$finalize()
+  }
+  ClassB <- function() {
+    classB <- ClassA()$extend()
+    classB$addMethod('foo', function(this) {
+      tester$assertEqual(c('get', 'set', 'fieldNames', 'methodNames', 'foo', 'publicMethod'), names(this))
+    })
+    classB$finalize()
+  }
+  ClassB()$foo()
+})
+
 tester$addTest('Test define public field and get it internally', function() {
   obj <- Object()
   dataKey <- obj$define('data', 26)
