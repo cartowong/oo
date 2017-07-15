@@ -34,6 +34,7 @@ UnitTester <- function(turnWarningsToErrors = TRUE) {
     unitTester$definePrivate('assertNotThrowErrorMessage', '')
     unitTester$definePrivate('hidePassed', FALSE)
 
+    # Add a test to this unit tester.
     unitTester$addMethod('addTest', function(this, testName, testMethod) {
       checkIsString(testName, 'testName should be a string')
       checkIsFunction(testMethod, 'testMethod should be a function')
@@ -45,6 +46,7 @@ UnitTester <- function(turnWarningsToErrors = TRUE) {
       this$set('testMethods', testMethods)
     })
 
+    # Private method to report the result of an assertion.
     unitTester$addPrivateMethod('report', function(this, passed, message) {
       if (passed) {
         this$set('numAssertionsPassed', this$get('numAssertionsPassed') + 1)
@@ -57,6 +59,7 @@ UnitTester <- function(turnWarningsToErrors = TRUE) {
       }
     })
 
+    # Run all tests that have been added using addTest.
     unitTester$addMethod('runAllTests', function(this, hidePassed = FALSE) {
       checkIsBoolean(hidePassed, 'hidePassed should be a boolean')
       this$set('hidePassed', hidePassed)
@@ -87,6 +90,7 @@ UnitTester <- function(turnWarningsToErrors = TRUE) {
       options(warn = 0) # restore to default setting
     })
 
+    # Assert that two objects are (almost) equal, based on all.equal in the base package.
     unitTester$addMethod('assertEqual', function(this, expect, actual, message = NA) {
       if (!isNA(message)) {
         checkIsString(message, 'message should be a string')
@@ -108,22 +112,27 @@ UnitTester <- function(turnWarningsToErrors = TRUE) {
       this$report(passed, message)
     })
 
+    # Assert that a value is NA.
     unitTester$addMethod('assertNA', function(this, value, message = NA) {
       this$assertEqual(NA, value, message)
     })
 
+    # Assert that a value is null.
     unitTester$addMethod('assertNull', function(this, value, message = NA) {
       this$assertEqual(NULL, value, message)
     })
 
+    # Assert that a value is true.
     unitTester$addMethod('assertTrue', function(this, value, message = NA) {
       this$assertEqual(TRUE, value, message)
     })
 
+    # Assert that a value is false.
     unitTester$addMethod('assertFalse', function(this, value, message = NA) {
       this$assertEqual(FALSE, value, message)
     })
 
+    # Assert that an error is thrown.
     unitTester$addMethod('assertThrow', function(this, f, message = NA) {
       if (!isNA(message)) {
         checkIsString(message, 'message should be a string')
@@ -151,6 +160,7 @@ UnitTester <- function(turnWarningsToErrors = TRUE) {
       this$report(passed, message)
     })
 
+    # Assert that no error is thrown.
     unitTester$addMethod('assertNotThrow', function(this, f, message = NA) {
       if (!isNA(message)) {
         checkIsString(message, 'message should be a string')
