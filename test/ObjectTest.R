@@ -5,12 +5,14 @@ tester$addTest('Test object properties', function() {
     classA <- Object()
     classA$define('publicField')
     classA$definePrivate('privateField')
+    classA$addMethod('publicMethod', function() {})
+    classA$addPrivateMethod('privateMethod', function() {})
     classA$finalize()
   }
   obj <- ClassA()
-  tester$assertEqual(c('get', 'set', 'fieldNames', 'methodNames', 'extend'), names(obj))
+  tester$assertEqual(c('get', 'set', 'fieldNames', 'methodNames', 'extend', 'publicMethod'), names(obj))
   tester$assertEqual(c('publicField'), obj$fieldNames())
-  tester$assertEqual(0, length(obj$methodNames()))
+  tester$assertEqual(c('publicMethod'), obj$methodNames())
 })
 
 tester$addTest('Test define public field and get it internally', function() {
@@ -183,6 +185,91 @@ tester$addTest('Test multiple objects', function() {
     obj1 <- ClassA()
     obj2 <- ClassA() # This should not throw an error.
   })
+})
+
+tester$addTest('Test different instances do not share public fields', function() {
+  Person <- function(name) {
+    person <- Object()
+    person$define('name', name)
+    person$finalize()
+  }
+
+  person1 <- Person('person1')
+  person2 <- Person('person2')
+  tester$assertEqual(c('person1', 'person2'), c(person1$get('name'), person2$get('name')))
+})
+
+tester$addTest('Test override a method', function() {
+  ClassA <- function() {
+    classA <- Object()
+    classA$addMethod('foo', function() {
+      return(1)
+    })
+    classA$finalize()
+  }
+  ClassB <- function() {
+    classB<- ClassA()$extend()
+    classB$overrideMethod('foo', function() {
+      return(2)
+    })
+    classB$finalize()
+  }
+  tester$assertEqual(c(1, 2), c(ClassA()$foo(), ClassB()$foo()))
+})
+
+tester$addTest('Test use addMethod instead of overrideMethod', function() {
+  tester$assertThrow(function() {
+    ClassA <- function() {
+      classA <- Object()
+      classA$addMethod('foo', function() {
+        return(1)
+      })
+      classA$finalize()
+    }
+    ClassB <- function() {
+      classB<- ClassA()$extend()
+      classB$addMethod('foo', function() {
+        return(2)
+      })
+      classB$finalize()
+    }
+    ClassB()
+  })
+})
+
+tester$addTest('Test override a non-existing method', function() {
+  tester$assertThrow(function() {
+    ClassA <- function() {
+      classA <- Object()
+      classA$finalize()
+    }
+    ClassB <- function() {
+      classB<- ClassA()$extend()
+      classB$overrideMethod('nonExistingMethodName', function() {
+        return(2)
+      })
+      classB$finalize()
+    }
+    ClassB()
+  })
+})
+
+tester$addTest('Test a private method does not prevent subclass to use the same method name', function() {
+  ClassA <- function() {
+    classA <- Object()
+    classA$addPrivateMethod('foo', function() {
+      return(1)
+    })
+    classA$finalize()
+  }
+  ClassB <- function() {
+    classB<- ClassA()$extend()
+    classB$addMethod('foo', function() {
+      return(2)
+    })
+    classB$finalize()
+  }
+  tester$assertEqual(2, ClassB()$foo())
 })
 
 tester$runAllTests()
