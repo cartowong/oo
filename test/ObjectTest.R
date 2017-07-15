@@ -205,6 +205,9 @@ tester$addTest('Test override a method', function() {
     classA$addMethod('foo', function() {
       return(1)
     })
+    classA$addMethod('callFoo', function(this) {
+      this$foo()
+    })
     classA$finalize()
   }
   ClassB <- function() {
@@ -214,7 +217,7 @@ tester$addTest('Test override a method', function() {
     })
     classB$finalize()
   }
-  tester$assertEqual(c(1, 2), c(ClassA()$foo(), ClassB()$foo()))
+  tester$assertEqual(c(1, 2, 1, 2), c(ClassA()$foo(), ClassB()$foo(), ClassA()$callFoo(), ClassB()$callFoo()))
 })
 
 tester$addTest('Test use addMethod instead of overrideMethod', function() {
