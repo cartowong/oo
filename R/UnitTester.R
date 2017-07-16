@@ -19,9 +19,13 @@
 #' @export
 UnitTester <- function(turnWarningsToErrors = TRUE, hidePassed = FALSE) {
 
+    checkIsBoolean(turnWarningsToErrors, 'turnWarningsToErrors should be a boolean')
+    checkIsBoolean(hidePassed, 'hidePassed should be a boolean')
+
     unitTester <- Object()
 
     turnWarningsToErrors <- turnWarningsToErrors
+    hidePassed <- hidePassed
 
     unitTester$definePrivate('testMethods', list())
     unitTester$definePrivate('currentTestName', '')
@@ -32,7 +36,6 @@ UnitTester <- function(turnWarningsToErrors = TRUE, hidePassed = FALSE) {
     unitTester$definePrivate('assertThrowErrorMessage', '')
     unitTester$definePrivate('assertNotThrowPassed', FALSE)
     unitTester$definePrivate('assertNotThrowErrorMessage', '')
-    unitTester$definePrivate('hidePassed', hidePassed)
 
     # Add a test to this unit tester.
     unitTester$addMethod('addTest', function(this, testName, testMethod) {
@@ -180,7 +183,7 @@ UnitTester <- function(turnWarningsToErrors = TRUE, hidePassed = FALSE) {
         this$set('numAssertionsFailed', this$get('numAssertionsFailed') + 1)
       }
 
-      if (!passed || !this$get('hidePassed')) {
+      if (!passed || !hidePassed) {
         cat(message)
       }
     })

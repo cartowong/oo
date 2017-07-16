@@ -3,6 +3,7 @@ An R package to provide an object-oriented framework for R programming.
 
 ## Updates
 
+* version 5.41 (July 16, 2017): Minor code change.
 * version 5.4 (July 15, 2017): Move the boolean argument `hidePassed` of `UnitTester$runAllTests` to the constructor of `UnitTester`.
 * version 5.31 (July 15, 2017): Minor code change.
 * version 5.3 (July 15, 2017): Add a boolean argument `hidePassed` to `UnitTester$runAllTests()`.
