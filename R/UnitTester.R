@@ -17,7 +17,7 @@
 #' unitTester$runAllTests()
 #'
 #' @export
-UnitTester <- function(turnWarningsToErrors = TRUE) {
+UnitTester <- function(turnWarningsToErrors = TRUE, hidePassed = FALSE) {
 
     unitTester <- Object()
 
@@ -32,7 +32,7 @@ UnitTester <- function(turnWarningsToErrors = TRUE) {
     unitTester$definePrivate('assertThrowErrorMessage', '')
     unitTester$definePrivate('assertNotThrowPassed', FALSE)
     unitTester$definePrivate('assertNotThrowErrorMessage', '')
-    unitTester$definePrivate('hidePassed', FALSE)
+    unitTester$definePrivate('hidePassed', hidePassed)
 
     # Add a test to this unit tester.
     unitTester$addMethod('addTest', function(this, testName, testMethod) {
@@ -47,10 +47,7 @@ UnitTester <- function(turnWarningsToErrors = TRUE) {
     })
 
     # Run all tests that have been added using addTest.
-    unitTester$addMethod('runAllTests', function(this, hidePassed = FALSE) {
-      checkIsBoolean(hidePassed, 'hidePassed should be a boolean')
-      this$set('hidePassed', hidePassed)
-
+    unitTester$addMethod('runAllTests', function(this) {
       if (turnWarningsToErrors) {
         options(warn = 2)
       }

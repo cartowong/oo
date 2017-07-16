@@ -1,4 +1,4 @@
-tester <- UnitTester()
+tester <- UnitTester(turnWarningsToErrors = TRUE, hidePassed = FALSE)
 
 tester$addTest('Test unfinalized object properties', function() {
   a <- Object()

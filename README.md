@@ -3,6 +3,7 @@ An R package to provide an object-oriented framework for R programming.
 
 ## Updates
 
+* version 5.4 (July 15, 2017): Move the boolean argument `hidePassed` of `UnitTester$runAllTests` to the constructor of `UnitTester`.
 * version 5.31 (July 15, 2017): Minor code change.
 * version 5.3 (July 15, 2017): Add a boolean argument `hidePassed` to `UnitTester$runAllTests()`.
 * version 5.2 (July 14, 2017): Fix a subtle bug to make sure a private field/method cannot be overriden by defining/adding a public field/method with the same name in a subclass.
@@ -299,10 +300,15 @@ The object `UnitTester` provides 2 methods for adding and running unit tests, an
 * assertThrow
 * assertTrue
 
-To illustrate the usage of UnitTester, the following are some example unit tests and the output of `runAllTests(hidePassed = FALSE)`. The boolean parameter `hidePassed` is added since version 5.3 to hide the passed test results, in case you are only interested in the failed assertions and the unexpected errors.
+The constructor of `UnitTester` has two arguments.
+
+* turnWarningsToErrors (default = TRUE)<br/>If set to TRUE, all warnings issued within any test method are turned into errors.
+* hidePassed (default = FALSE)<br/>If set to TURE, all passed test results will be hidden in the output. This is useful when you are only interested in the failed assertions and the unexpected errors.
+
+To illustrate the usage of UnitTester, the following are some example unit tests and the output of `runAllTests()`.
 
 ```
-unitTester <- UnitTester()
+unitTester <- UnitTester(turnWarningsToErrors = TRUE, hidePassed = FALSE)
 
 unitTester$addTest('Test 1', function() {
   unitTester$assertEqual(1, 1)

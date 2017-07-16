@@ -4,7 +4,7 @@
 \alias{UnitTester}
 \title{Constructor of the class UnitTester.}
 \usage{
-UnitTester(turnWarningsToErrors = TRUE)
+UnitTester(turnWarningsToErrors = TRUE, hidePassed = FALSE)
 }
 \value{
 an instance of UnitTester
