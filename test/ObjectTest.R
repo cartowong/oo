@@ -87,6 +87,12 @@ tester$addTest('Test definePrivate(key, value) returns the key', function() {
   tester$assertEqual('a', aKey)
 })
 
+tester$addTest('Test set(key, value) returns the value', function() {
+  obj <- Object()
+  obj$define('a')
+  tester$assertEqual(26, obj$set('a', 26))
+})
+
 tester$addTest('Test define public field and get it internally', function() {
   obj <- Object()
   dataKey <- obj$define('data', 26)
