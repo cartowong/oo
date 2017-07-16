@@ -46,19 +46,6 @@ UnitTester <- function(turnWarningsToErrors = TRUE) {
       this$set('testMethods', testMethods)
     })
 
-    # Private method to report the result of an assertion.
-    unitTester$addPrivateMethod('report', function(this, passed, message) {
-      if (passed) {
-        this$set('numAssertionsPassed', this$get('numAssertionsPassed') + 1)
-      } else {
-        this$set('numAssertionsFailed', this$get('numAssertionsFailed') + 1)
-      }
-
-      if (!passed || !this$get('hidePassed')) {
-        cat(message)
-      }
-    })
-
     # Run all tests that have been added using addTest.
     unitTester$addMethod('runAllTests', function(this, hidePassed = FALSE) {
       checkIsBoolean(hidePassed, 'hidePassed should be a boolean')
@@ -186,6 +173,19 @@ UnitTester <- function(turnWarningsToErrors = TRUE) {
       }
 
       this$report(passed, message)
+    })
+
+    # Private method to report the result of an assertion.
+    unitTester$addPrivateMethod('report', function(this, passed, message) {
+      if (passed) {
+        this$set('numAssertionsPassed', this$get('numAssertionsPassed') + 1)
+      } else {
+        this$set('numAssertionsFailed', this$get('numAssertionsFailed') + 1)
+      }
+
+      if (!passed || !this$get('hidePassed')) {
+        cat(message)
+      }
     })
 
     unitTester$finalize()

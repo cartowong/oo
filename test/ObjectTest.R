@@ -49,6 +49,21 @@ tester$addTest('Test extended this properties', function() {
   ClassB()$foo()
 })
 
+tester$addTest('Test that methods can be added in any order', function() {
+  tester$assertNotThrow(function() {
+    A <- function() {
+      a <- Object()
+      a$addMethod('bar', function(this) {
+        this$foo() # calling a method defined below
+      })
+      a$addMethod('foo', function() {})
+      a$finalize()
+    }
+    a <- A()
+    a$bar()
+  })
+})
+
 tester$addTest('Test define public field and get it internally', function() {
   obj <- Object()
   dataKey <- obj$define('data', 26)

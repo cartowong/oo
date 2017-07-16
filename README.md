@@ -3,6 +3,7 @@ An R package to provide an object-oriented framework for R programming.
 
 ## Updates
 
+* version 5.31 (July 15, 2017): Minor code change.
 * version 5.3 (July 15, 2017): Add a boolean argument `hidePassed` to `UnitTester$runAllTests()`.
 * version 5.2 (July 14, 2017): Fix a subtle bug to make sure a private field/method cannot be overriden by defining/adding a public field/method with the same name in a subclass.
 * version 5.1 (July 14, 2017): Add unit tests and make minor code change.
