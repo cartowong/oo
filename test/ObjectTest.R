@@ -1,5 +1,16 @@
 tester <- UnitTester()
 
+tester$addTest('Test unfinalized object properties', function() {
+  a <- Object()
+  a$define('publicField')
+  a$definePrivate('privateField')
+  a$addMethod('publicMethod', function() {})
+  a$addPrivateMethod('privateMethod', function() {})
+
+  tester$assertEqual(c('define', 'definePrivate', 'get', 'set', 'fieldNames', 'methodNames', 'addMethod', 'addPrivateMethod', 'extend', 'finalize'), names(a))
+  tester$assertEqual(c('publicField'), a$fieldNames())
+  tester$assertEqual(c('publicMethod'), a$methodNames())
+})
 tester$addTest('Test object properties', function() {
   ClassA <- function() {
     classA <- Object()
@@ -62,6 +73,18 @@ tester$addTest('Test that methods can be added in any order', function() {
     a <- A()
     a$bar()
   })
+})
+
+tester$addTest('Test define(key, value) returns the key', function() {
+  obj <- Object()
+  aKey <- obj$define('a')
+  tester$assertEqual('a', aKey)
+})
+
+tester$addTest('Test definePrivate(key, value) returns the key', function() {
+  obj <- Object()
+  aKey <- obj$definePrivate('a')
+  tester$assertEqual('a', aKey)
 })
 
 tester$addTest('Test define public field and get it internally', function() {
