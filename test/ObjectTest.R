@@ -66,14 +66,14 @@ tester$addTest('Test extended this properties', function() {
     a$addPrivateMethod('privateMethod', function() {})
     a$finalize()
   }
-  ClassB <- function() {
-    classB <- A()$extend()
-    classB$addMethod('foo', function(this) {
+  B <- function() {
+    b <- A()$extend()
+    b$addMethod('foo', function(this) {
       tester$assertEqual(c('get', 'set', 'fieldNames', 'methodNames', 'foo', 'publicMethod'), names(this))
     })
-    classB$finalize()
+    b$finalize()
   }
-  ClassB()$foo()
+  B()$foo()
 })
 
 tester$addTest('Test that methods can be added in any order', function() {
@@ -302,13 +302,13 @@ tester$addTest('Test override a public field', function() {
     })
     a$finalize()
   }
-  ClassB <- function() {
-    classB<- A()$extend()
-    classB$set('data', 27)
-    classB$finalize()
+  B <- function() {
+    b<- A()$extend()
+    b$set('data', 27)
+    b$finalize()
   }
   a <- A()
-  b <- ClassB()
+  b <- B()
   tester$assertEqual(c(26, 26, 27, 27), c(a$get('data'), a$getData(), b$get('data'), b$getData()))
 })
 
@@ -321,13 +321,13 @@ tester$addTest('Test private field cannot be overriden by adding a public field 
     })
     a$finalize()
   }
-  ClassB <- function() {
-    classB<- A()$extend()
-    classB$define('data', 27)
-    classB$finalize()
+  B <- function() {
+    b<- A()$extend()
+    b$define('data', 27)
+    b$finalize()
   }
   a <- A()
-  b <- ClassB()
+  b <- B()
   tester$assertEqual(c(26, 27, 26), c(a$getData(), b$get('data'), b$getData()))
 })
 
@@ -342,14 +342,14 @@ tester$addTest('Test override a public method', function() {
     })
     a$finalize()
   }
-  ClassB <- function() {
-    classB<- A()$extend()
-    classB$overrideMethod('foo', function() {
+  B <- function() {
+    b<- A()$extend()
+    b$overrideMethod('foo', function() {
       return(2)
     })
-    classB$finalize()
+    b$finalize()
   }
-  tester$assertEqual(c(1, 2, 1, 2), c(A()$foo(), ClassB()$foo(), A()$callFoo(), ClassB()$callFoo()))
+  tester$assertEqual(c(1, 2, 1, 2), c(A()$foo(), B()$foo(), A()$callFoo(), B()$callFoo()))
 })
 
 tester$addTest('Test private method cannot be overriden by adding a method with the same name in a subclass', function() {
@@ -363,14 +363,14 @@ tester$addTest('Test private method cannot be overriden by adding a method with 
     })
     a$finalize()
   }
-  ClassB <- function() {
-    classB<- A()$extend()
-    classB$addMethod('foo', function() {
+  B <- function() {
+    b<- A()$extend()
+    b$addMethod('foo', function() {
       return(2)
     })
-    classB$finalize()
+    b$finalize()
   }
-  tester$assertEqual(c(1, 2, 1), c(A()$callFoo(), ClassB()$foo(), ClassB()$callFoo()))
+  tester$assertEqual(c(1, 2, 1), c(A()$callFoo(), B()$foo(), B()$callFoo()))
 })
 
 tester$addTest('Test use addMethod instead of overrideMethod', function() {
@@ -382,14 +382,14 @@ tester$addTest('Test use addMethod instead of overrideMethod', function() {
       })
       a$finalize()
     }
-    ClassB <- function() {
-      classB<- A()$extend()
-      classB$addMethod('foo', function() {
+    B <- function() {
+      b<- A()$extend()
+      b$addMethod('foo', function() {
         return(2)
       })
-      classB$finalize()
+      b$finalize()
     }
-    ClassB()
+    B()
   })
 })
 
@@ -399,14 +399,14 @@ tester$addTest('Test override a non-existing method', function() {
       a <- Object()
       a$finalize()
     }
-    ClassB <- function() {
-      classB<- A()$extend()
-      classB$overrideMethod('nonExistingMethodName', function() {
+    B <- function() {
+      b<- A()$extend()
+      b$overrideMethod('nonExistingMethodName', function() {
         return(2)
       })
-      classB$finalize()
+      b$finalize()
     }
-    ClassB()
+    B()
   })
 })
 
@@ -418,14 +418,14 @@ tester$addTest('Test a private method does not prevent subclass to use the same 
     })
     a$finalize()
   }
-  ClassB <- function() {
-    classB<- A()$extend()
-    classB$addMethod('foo', function() {
+  B <- function() {
+    b<- A()$extend()
+    b$addMethod('foo', function() {
       return(2)
     })
-    classB$finalize()
+    b$finalize()
   }
-  tester$assertEqual(2, ClassB()$foo())
+  tester$assertEqual(2, B()$foo())
 })
 
 tester$addTest('Test recursive method', function(this) {
