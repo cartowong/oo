@@ -1,5 +1,7 @@
 #' Constructor of the class UnitTester.
 #'
+#' @param turnWarningsToErrors If set to TRUE, all warnings issued within any test method are turned into errors. The default value is TRUE.
+#' @param hidePassed If set to TRUE, all passed test results are hidden in the output. The is useful when you are only interested in the failed assertions and the unexpected errors. The default value is FALSE.
 #' @return an instance of UnitTester
 #' @examples
 #' unitTester <- UnitTester()

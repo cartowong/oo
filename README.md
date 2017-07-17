@@ -3,6 +3,7 @@ An R package to provide an object-oriented framework for R programming.
 
 ## Updates
 
+* version 5.42 (July 16, 2017): Edit the R documentation of the class UnitTester.
 * version 5.41 (July 16, 2017): Minor code change.
 * version 5.4 (July 15, 2017): Move the boolean argument `hidePassed` of `UnitTester$runAllTests` to the constructor of `UnitTester`.
 * version 5.31 (July 15, 2017): Minor code change.
@@ -304,7 +305,7 @@ The object `UnitTester` provides 2 methods for adding and running unit tests, an
 The constructor of `UnitTester` has two arguments.
 
 * turnWarningsToErrors (default = TRUE)<br/>If set to TRUE, all warnings issued within any test method are turned into errors.
-* hidePassed (default = FALSE)<br/>If set to TURE, all passed test results will be hidden in the output. This is useful when you are only interested in the failed assertions and the unexpected errors.
+* hidePassed (default = FALSE)<br/>If set to TURE, all passed test results are hidden in the output. This is useful when you are only interested in the failed assertions and the unexpected errors.
 
 To illustrate the usage of UnitTester, the following are some example unit tests and the output of `runAllTests()`.
 
