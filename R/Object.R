@@ -1,4 +1,4 @@
-#' Construct an object.
+#' Construct an object
 #'
 #' This function should be called at the begining of a constructor function to create an object.
 #'

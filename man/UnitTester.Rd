@@ -2,7 +2,7 @@
 % Please edit documentation in R/UnitTester.R
 \name{UnitTester}
 \alias{UnitTester}
-\title{Constructor of the class UnitTester.}
+\title{Constructor of the class UnitTester}
 \usage{
 UnitTester(turnWarningsToErrors = TRUE, hidePassed = FALSE)
 }
@@ -15,7 +15,7 @@ UnitTester(turnWarningsToErrors = TRUE, hidePassed = FALSE)
 an instance of UnitTester
 }
 \description{
-Constructor of the class UnitTester.
+Constructor of the class UnitTester
 }
 \examples{
 unitTester <- UnitTester()

@@ -78,7 +78,7 @@ checkIsString <- function(x, message = 'x should be a string', allowNA = FALSE, 
   }
 }
 
-#' Constructor of Precondition
+#' Constructor of the class Precondition
 #'
 #' Utility functions for checking the type of an argument, based on TypeChecker in the same package.
 #' If the argument is not of the expected type, an error will be thrown. Usually, these utility

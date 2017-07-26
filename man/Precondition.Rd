@@ -2,7 +2,7 @@
 % Please edit documentation in R/Precondition.R
 \name{Precondition}
 \alias{Precondition}
-\title{Constructor of Precondition}
+\title{Constructor of the class Precondition}
 \usage{
 Precondition(allowNA = FALSE, allowNull = FALSE)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/Object.R
 \name{Object}
 \alias{Object}
-\title{Construct an object.}
+\title{Construct an object}
 \usage{
 Object()
 }
