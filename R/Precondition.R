@@ -110,6 +110,12 @@ Precondition <- function(allowNA = FALSE, allowNull = FALSE) {
 
   precondition$addMethod('checkIsNull', checkIsNull)
 
+  precondition$addMethod('checkIsTrue', function(x, message) {
+    if (!isBoolean(x) || !x) {
+      stop(message)
+    }
+  })
+
   precondition$addMethod('checkIsBoolean', function(x, message) {
     checkIsBoolean(x, message, allowNA = allowNA, allowNull = allowNull)
   })

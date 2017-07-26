@@ -3,6 +3,7 @@ An R package to provide an object-oriented framework for R programming.
 
 ## Updates
 
+* version 5.5 (July 26, 2017): Add method `Precondition$checkIsTrue(x, message)`.
 * version 5.42 (July 16, 2017): Edit the R documentation of the class UnitTester.
 * version 5.41 (July 16, 2017): Minor code change.
 * version 5.4 (July 15, 2017): Move the boolean argument `hidePassed` of `UnitTester$runAllTests` to the constructor of `UnitTester`.
