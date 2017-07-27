@@ -13,5 +13,5 @@ an object.
 This function should be called at the begining of a constructor function to create an object.
 }
 \details{
-Any object has the methods "define", "definePrivate", "get", "set", "fieldNames", "methodNames", "addMethod", "addPrivateMethod", "extend", and "finalize". Some of these methods are removed after finalize() is called. For more details, see http://www.github.com/cartowong/oo.
+Any object has the methods "define", "definePrivate", "get", "set", "fieldNames", "methodNames", "addMethod", "addPrivateMethod", "extend", "overrideMethod", and "finalize". Some of these methods are removed after finalize() is called. For more details, see http://www.github.com/cartowong/oo.
 }

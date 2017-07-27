@@ -7,7 +7,7 @@ tester$addTest('Test unfinalized object properties', function() {
   a$addMethod('publicMethod', function() {})
   a$addPrivateMethod('privateMethod', function() {})
 
-  tester$assertEqual(c('define', 'definePrivate', 'get', 'set', 'fieldNames', 'methodNames', 'addMethod', 'addPrivateMethod', 'extend', 'finalize'), names(a))
+  tester$assertEqual(c('define', 'definePrivate', 'get', 'set', 'fieldNames', 'methodNames', 'addMethod', 'addPrivateMethod', 'extend', 'overrideMethod', 'finalize'), names(a))
   tester$assertEqual(c('publicField'), a$fieldNames())
   tester$assertEqual(c('publicMethod'), a$methodNames())
 })
@@ -21,10 +21,10 @@ tester$addTest('Test object properties', function() {
     a$addPrivateMethod('privateMethod', function() {})
     a$finalize()
   }
-  obj <- A()
-  tester$assertEqual(c('get', 'set', 'fieldNames', 'methodNames', 'extend', 'publicMethod'), names(obj))
-  tester$assertEqual(c('publicField'), obj$fieldNames())
-  tester$assertEqual(c('publicMethod'), obj$methodNames())
+  a <- A()
+  tester$assertEqual(c('get', 'set', 'fieldNames', 'methodNames', 'extend', 'publicMethod'), names(a))
+  tester$assertEqual(c('publicField'), a$fieldNames())
+  tester$assertEqual(c('publicMethod'), a$methodNames())
 })
 
 tester$addTest('Test this properties', function() {
@@ -54,7 +54,7 @@ tester$addTest('Test extended object properties', function() {
   a <- A()
   b <- A()$extend()
   tester$assertEqual(c('get', 'set', 'fieldNames', 'methodNames', 'extend', 'publicMethod'), names(a))
-  tester$assertEqual(c('define', 'definePrivate', 'get', 'set', 'fieldNames', 'methodNames', 'addMethod', 'addPrivateMethod', 'extend', 'finalize', 'overrideMethod'), names(b))
+  tester$assertEqual(c('define', 'definePrivate', 'get', 'set', 'fieldNames', 'methodNames', 'addMethod', 'addPrivateMethod', 'extend', 'overrideMethod', 'finalize'), names(b))
 })
 
 tester$addTest('Test extended this properties', function() {
@@ -125,6 +125,21 @@ tester$addTest('Test define public field and get it using this', function() {
   tester$assertEqual(26, obj$getData())
 })
 
+tester$addTest('Test define public field and get it using this in overriden method body', function() {
+  a <- Object()
+  a$addMethod('foo', function() {})
+  a$finalize()
+
+  b <- a$extend()
+  dataKey <- b$define('data', 26)
+  b$overrideMethod('foo', function(this) {
+    this$get(dataKey)
+  })
+  b <- b$finalize()
+
+  tester$assertEqual(26, b$foo())
+})
+
 tester$addTest('Test define public field and get it externally', function() {
   obj <- Object()
   dataKey <- obj$define('data', 26)
@@ -146,6 +161,30 @@ tester$addTest('Test define private field and get it using this', function() {
   })
   obj <- obj$finalize()
   tester$assertEqual(26, obj$getData())
+})
+
+tester$addTest('Test define private field and get it using this in overriden method body', function() {
+  a <- Object()
+  a$definePrivate('privateData', 43)
+  a$addMethod('getData', function(this) {
+    this$get('privateData')
+  })
+  a$finalize()
+
+  b <- a$extend()
+  dataKey <- b$definePrivate('data', 26)
+  b$addMethod('getDataFromParent', function(this) {
+    this$get('privateData')
+  })
+  b$overrideMethod('getData', function(this) {
+    this$get(dataKey)
+  })
+  b <- b$finalize()
+
+  tester$assertThrow(function() {
+    b$getDataFromParent()
+  })
+  tester$assertEqual(26, b$getData())
 })
 
 tester$addTest('Test define private field and get it externally', function() {
@@ -426,6 +465,23 @@ tester$addTest('Test a private method does not prevent subclass to use the same 
     b$finalize()
   }
   tester$assertEqual(2, B()$foo())
+})
+
+tester$addTest('Test private methods of the same class are accessible when overriding a method', function() {
+  a <- Object()
+  a$addMethod('foo', function() { 26 })
+  a <- a$finalize()
+
+  b <- a$extend()
+  b$addPrivateMethod('get27', function() {
+    27
+  })
+  b$overrideMethod('foo', function(this) {
+    this$get27()
+  })
+  b <- b$finalize()
+
+  tester$assertEqual(27, b$foo())
 })
 
 tester$addTest('Test recursive method', function(this) {

@@ -3,7 +3,7 @@
 #' This function should be called at the begining of a constructor function to create an object.
 #'
 #' @return an object.
-#' @details Any object has the methods "define", "definePrivate", "get", "set", "fieldNames", "methodNames", "addMethod", "addPrivateMethod", "extend", and "finalize". Some of these methods are removed after finalize() is called. For more details, see http://www.github.com/cartowong/oo.
+#' @details Any object has the methods "define", "definePrivate", "get", "set", "fieldNames", "methodNames", "addMethod", "addPrivateMethod", "extend", "overrideMethod", and "finalize". Some of these methods are removed after finalize() is called. For more details, see http://www.github.com/cartowong/oo.
 #' @export
 Object <- function() {
   createObject(
@@ -151,6 +151,7 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
     object$addMethod <- NULL
     object$addPrivateMethod <- NULL
     object$extend <- NULL
+    object$overrideMethod <- NULL
     object$finalize <- NULL
     object
   }
@@ -223,7 +224,6 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
       publicMethodEnv = publicMethodEnv,
       privateMethodEnv = new.env()
     )
-    object$overrideMethod <- overrideMethod
     object
   }
 
@@ -265,7 +265,6 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
     object$set <- function(key, value) {
       setField(key, value, includePrivate = FALSE)
     }
-    object$addPrivateMethod <- NULL
 
     # remove private getter
     object$get <- function(key) {
@@ -276,6 +275,8 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
     object$define <- NULL
     object$definePrivate <- NULL
     object$addMethod <- NULL
+    object$addPrivateMethod <- NULL
+    object$overrideMethod <- NULL
     object$finalize <- NULL
 
     object
@@ -328,6 +329,9 @@ createObject <- function(publicFieldEnv, privateFieldEnv, publicMethodEnv, priva
 
   # extend an object
   object$extend <- extend
+
+  # override a method
+  object$overrideMethod <- overrideMethod
 
   # finalize an object
   object$finalize <- finalize
