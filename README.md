@@ -3,6 +3,7 @@ An R package to provide an object-oriented framework for R programming.
 
 ## Updates
 
+* version 5.7 (July 30, 2017): Add the function `include(path)`.
 * version 5.6 (July 26, 2017): Fix a bug where the `this` object provided by `Object$overrideMethod` can access the private fields of the super class.
 * version 5.51 (July 26, 2017): Minor R documentation change.
 * version 5.5 (July 26, 2017): Add method `Precondition$checkIsTrue(x, message)`.
