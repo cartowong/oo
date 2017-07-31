@@ -4,10 +4,12 @@
 \alias{include}
 \title{Source all R script files under the given path, recursively.}
 \usage{
-include(path)
+include(path, ignore = NA)
 }
 \arguments{
 \item{path}{a string. The path of a directory in which all R script files will be sourced.}
+
+\item{ignore}{a regular expression string. Any matching file path will not be sourced.}
 }
 \value{
 a vector of strings. The paths of the sourced files.

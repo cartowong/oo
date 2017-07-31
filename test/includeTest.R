@@ -18,4 +18,16 @@ tester$addTest('Test empty path', function() {
   })
 })
 
+tester$addTest('Test ignore file', function() {
+  path <- file.path('test', 'resource')
+  sourcedFiles <- include(path, ignore = 'sub1')
+  tester$assertEqual(c(file.path('test', 'resource', '1.R')), sourcedFiles)
+})
+
+tester$addTest('Test ignore dir', function() {
+  path <- file.path('test', 'resource')
+  sourcedFiles <- include(path, ignore = 'sub')
+  tester$assertEqual(c(file.path('test', 'resource', '1.R')), sourcedFiles)
+})
+
 tester$runAllTests()
