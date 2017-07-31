@@ -9,6 +9,11 @@ include <- function(path) {
     stop(sprintf('Not an existing directory: %s', path))
   }
 
+  # remove / or \ at the end of the path
+  fileSep <- .Platform$file.sep # / or \ depending on the platform
+  pattern <- sprintf('(.*)%s$', fileSep)
+  path <- gsub(pattern = pattern, replacement = '\\1', x = path)
+
   files <- list.files(path = path, include.dirs = FALSE, recursive = TRUE)
   scriptFiles <- c()
   for (file in files) {

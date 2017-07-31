@@ -1,4 +1,4 @@
-tester <- UnitTester()
+tester <- UnitTester(turnWarningsToErrors = TRUE, hidePassed = TRUE)
 
 tester$addTest('Test isNA', function() {
   tester$assertTrue(TypeChecker()$isNA(NA))
