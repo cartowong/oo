@@ -1,27 +1,3 @@
-# checkIsNA
-#
-# Throw an error if the given value is not NA.
-#
-# @param x the given value
-# @param message the error message
-checkIsNA <- function(x, message = 'x should be NA') {
-  if (!isNA(x)) {
-    stop(message)
-  }
-}
-
-# checkIsNull
-#
-# Throw an error if the given value is not null.
-#
-# @param x the given value
-# @param message the error message
-checkIsNull <- function(x, message = 'x should be Null') {
-  if (!isNull(x)) {
-    stop(message)
-  }
-}
-
 # checkIsBoolean
 #
 # Throw an error if the given value is not a boolean.
@@ -78,9 +54,24 @@ checkIsString <- function(x, message = 'x should be a string', allowNA = FALSE, 
   }
 }
 
+# checkNotNullNotNA
+#
+# Ensure the given argument is not null and is not NA.
+#
+# @param x the given value
+# @param message the error message
+checkNotNullNotNA <- function(x, message = 'x should be non-null and non-NA') {
+  if (isNull(x) || isNA(x)) {
+    stop(message)
+  }
+}
+
 # checkArgument
 #
 # Ensure the truth of an expression invovling one or more parameters to the calling method.
+#
+# @param expression the boolean expression to check
+# @param message the error message
 checkArgument <- function(expression, message = "checkArgument failed") {
   if (!isBoolean(expression) || !expression) {
     stop(message)
@@ -91,6 +82,9 @@ checkArgument <- function(expression, message = "checkArgument failed") {
 #
 # Ensure the truth of an expression invovling the state of the calling instance, but not
 # involving any parameters to the calling method.
+#
+# @param expression the boolean expression to check
+# @param message the error message
 checkState <- function(expression, message = "checkState failed") {
   if (!isBoolean(expression) || !expression) {
     stop(message)
@@ -125,10 +119,6 @@ Precondition <- function(allowNA = FALSE, allowNull = FALSE) {
   allowNA <- allowNA
   allowNull <- allowNull
 
-  precondition$addMethod('checkIsNA', checkIsNA)
-
-  precondition$addMethod('checkIsNull', checkIsNull)
-
   precondition$addMethod('checkIsBoolean', function(x, message) {
     checkIsBoolean(x, message, allowNA = allowNA, allowNull = allowNull)
   })
@@ -143,6 +133,10 @@ Precondition <- function(allowNA = FALSE, allowNull = FALSE) {
 
   precondition$addMethod('checkIsString', function(x, message) {
     checkIsString(x, message, allowNA = allowNA, allowNull = allowNull)
+  })
+
+  precondition$addMethod('checkNotNullNotNA', function(x, message) {
+    checkNotNullNotNA(x, message)
   })
 
   precondition$addMethod('checkArgument', function(expression, message) {
