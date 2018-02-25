@@ -78,6 +78,25 @@ checkIsString <- function(x, message = 'x should be a string', allowNA = FALSE, 
   }
 }
 
+# checkArgument
+#
+# Ensure the truth of an expression invovling one or more parameters to the calling method.
+checkArgument <- function(expression, message = "checkArgument failed") {
+  if (!isBoolean(expression) || !expression) {
+    stop(message)
+  }
+}
+
+# checkState
+#
+# Ensure the truth of an expression invovling the state of the calling instance, but not
+# involving any parameters to the calling method.
+checkState <- function(expression, message = "checkState failed") {
+  if (!isBoolean(expression) || !expression) {
+    stop(message)
+  }
+}
+
 #' Constructor of the class Precondition
 #'
 #' Utility functions for checking the type of an argument, based on TypeChecker in the same package.
@@ -110,12 +129,6 @@ Precondition <- function(allowNA = FALSE, allowNull = FALSE) {
 
   precondition$addMethod('checkIsNull', checkIsNull)
 
-  precondition$addMethod('checkIsTrue', function(x, message) {
-    if (!isBoolean(x) || !x) {
-      stop(message)
-    }
-  })
-
   precondition$addMethod('checkIsBoolean', function(x, message) {
     checkIsBoolean(x, message, allowNA = allowNA, allowNull = allowNull)
   })
@@ -130,6 +143,14 @@ Precondition <- function(allowNA = FALSE, allowNull = FALSE) {
 
   precondition$addMethod('checkIsString', function(x, message) {
     checkIsString(x, message, allowNA = allowNA, allowNull = allowNull)
+  })
+
+  precondition$addMethod('checkArgument', function(expression, message) {
+    checkArgument(expression, message)
+  })
+
+  precondition$addMethod('checkState', function(expression, message) {
+    checkState(expression, message)
   })
 
   precondition$finalize()

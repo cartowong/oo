@@ -3,6 +3,7 @@ An R package to provide an object-oriented framework for R programming.
 
 ## Updates
 
+* version 5.73 (Feb 24, 2018): Add methods `Precondition$checkArgument(expression, message)` and `Precondition$checkState(expression, message)`.
 * version 5.72 (July 30, 2017): Add an argument `ignore` to `include(path)`.
 * version 5.71 (July 30, 2017): Add unit test into includeTest.R and handle ending file separator (slash or backslash depending on the platform) in the path.
 * version 5.7 (July 30, 2017): Add the function `include(path)`.
@@ -161,6 +162,17 @@ myFunction <- function(x) {
   ...
 }
 ```
+
+Below is a full list of precondition methods. The boolean parameters `allowNA` and `allowNull` of the `Precondition` constructor are relevant only when calling `checkIsBoolean`, `checkIsFunction`, `checkIsNumeric`, or `checkIsString`.
+
+* checkIsNA(x, message)
+* checkIsNull(x, message)
+* checkIsBoolean(x, message)
+* checkIsFunction(x, message)
+* checkIsNumeric(x, message)
+* checkIsString(x, message)
+* checkArgument(expression, message)
+* checkState(expression, message)
 
 ## Inheritance
 Extending a class is similar to defining a class except for two differences.
