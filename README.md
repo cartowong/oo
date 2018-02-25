@@ -3,6 +3,7 @@ An R package to provide an object-oriented framework for R programming.
 
 ## Updates
 
+* version 5.7.4 (Feb 24, 2018): Change version number to the form MAJOR.MINOR.PATCH. Increase the MAJOR version when you make incompatible API changes, MINOR version when you add functionality in a backwards-compatible manner, and PATCH version when you make backwards-compatible bug fixes.
 * version 5.74 (Feb 24, 2018): Add method `Precondition$checkNotNullNotNA(x, message)`.
 * version 5.73 (Feb 24, 2018): Add methods `Precondition$checkArgument(expression, message)` and `Precondition$checkState(expression, message)`.
 * version 5.72 (July 30, 2017): Add an argument `ignore` to `include(path)`.
